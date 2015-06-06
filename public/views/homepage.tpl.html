@@ -1,0 +1,48 @@
+<div style = "padding:0; padding-top:8em; ">
+   <div class="text-center" style="font-size:3em;">
+      <p>Keeps track of all your subscriptions and fund transfers</p>
+   </div>
+
+   <div class="">
+	   <form class="form-signin" novalidate ng-show="formView==='signin'" style = "box-shadow: 0em 0em .2em #ccc">
+			<h3>Please sign  in</h3>
+			<label for="inputEmail" class="sr-only">User name</label>
+			<input type="text" class="form-control" placeholder="User name"  ng-model="loginDetails.username" required>
+			<label for="inputPassword" class="sr-only">Password</label>
+			<input type="password" class="form-control" placeholder="Password" ng-model="loginDetails.password" required> 
+			<div class="checkbox">
+			  <label>
+				<input type="checkbox" value="remember-me" ng-model="loginDetails.remember"> Remember me
+			  </label>
+			</div>
+			<div class="alert alert-danger" ng-show="loginError">
+			  <i class="icon fa fa-times fa-lg pull-right" ng-click="loginError=undefined"></i>
+			  <label>
+				  {{loginError}}
+			  </label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" style="border-radius:0px !important; height:3em" ng-click="login(loginDetails)">Sign in</button>
+	   </form>
+	   
+	   <form class="form-signin" novalidate ng-show="formView==='register'" style = "box-shadow: 0em 0em .2em #ccc">
+			<h3>Please enter your details below</h3>
+			<input type="text" class="form-control" placeholder="Full Name"  ng-model="newUser.fullName" required>
+			<input type="text" class="form-control" placeholder="User Name"  ng-model="newUser.username" required>
+			<input type="text" class="form-control" placeholder="Email"  ng-model="newUser.email" required>
+			
+			
+			<input type="password" class="form-control" placeholder="Password" ng-model="newUser.password" required>
+			<input type="password" class="form-control" placeholder="Confirm Password" ng-model="sanity.password" required>
+			
+			<input type="text" class="form-control" placeholder="Phone Number"  ng-model="newUser.phone" required>
+			<select class="form-control" ng-options="option for option in countries" ng-model="newUser.country" style="margin-top:1em"><option value="">select country</option></select> 				
+			<div class="checkbox">
+			  <label>
+				<input type="checkbox" value="remember-me" ng-model="sanity.agree"> I agree to the terms of using this service
+			  </label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" style="border-radius:0px !important; height:3em" ng-click="signup(newUser , sanity)">Sign up</button>
+	   </form>
+	   
+   </div>
+</div>

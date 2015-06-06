@@ -1,0 +1,39 @@
+<!-- Static navbar -->
+<nav class="navbar navbar-default" style="border-top:2px solid #ccc; padding-left:0;padding-right:0;">
+   <div class="navbar-header col-md-12" style="padding-left:0;padding-right:0;">
+	  <a class="navbar-brand hidden-xs" style="padding-top:0 !important"><img src="img/billpouch.png" height="50"></a>
+	  <a class="navbar-brand visible-xs" style="padding-top:0;padding-left:0;"><img src="img/billpouch_s.png" height="50"></a>
+   
+	  <div class="btn-group pull-right " style="margin-right:em" ng-show="view!=='homepage'">
+	  
+		 <div class="btn-group" style="margin-top:.6em">
+			  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+				<i class="icon fa fa-user"></i>
+				<span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu">
+				  <li><a href="#" ng-click = "changeView('profile')">Profile</a></li>
+				  <li class="divider"></li>
+				  <li><a href="#" data-toggle="modal" data-target="#withdraw">Withdraw</a></li>
+				  <li><a href="#" data-toggle="modal" data-target="#payIn"> Pay In</a></li>
+				  <li class="divider"></li>
+				  <li><a href="#"  ng-click = "logout()">Log-out</a></li>
+			  </ul>
+		 </div>
+		 
+
+		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" ng-click="changeView('contacts')">
+			 <i class="icon fa fa-users"></i>
+		  </div>
+		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" data-toggle="modal" data-target="#newUser">
+			 <i class="icon fa fa-user-plus"></i>
+		  </div>  
+	  </div>
+	  
+	  <div class="btn-group pull-right" style="margin-top:.6em" ng-show="view==='homepage'">
+	     <button class="btn btn-link" style="text-decoration:none" ng-click="homepageAction('signin')">Sign in</button>
+	     <button class="btn btn-link" style="text-decoration:none" ng-click="homepageAction('register')">Register</button>
+		 <button class="btn btn-link" style="text-decoration:none" ng-click="homepageAction('blog')">Blog</button>
+	  </div>
+	</div>
+</nav>

@@ -1,0 +1,58 @@
+<div>
+ 
+   <div class="panel panel-default" style="margin-bottom:0; box-shadow:0 0 0 #fff; border-bottom:3px solid #337ab7;">
+	  <div class="panel-heading" style="padding-top:.5em; padding-bottom:.5em;">
+		 <i class="icon fa fa-chevron-left back-btn" style="font-size:1.6em; position:absolute; left:.4em; top:.5em;" ng-click="changeView('contacts')"></i>
+		 
+		 <div class="btn-group pull-right" style="font-size:1em;">
+			  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+				<i class="icon fa fa-cog" style="color: {{randomColors[$index]}}"></i>
+				<span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu">
+				<li><a href="#"><i class="icon fa fa-trash"></i> Delete contact</a></li>
+				<li><a href="#"><i class="icon fa fa-ban"></i> Block contact</a></li>
+			  </ul>
+		 </div>
+		 
+		 <img ng-src= {{contact.imgSrc}} height="30" style="padding-left:1em;">
+		 {{contact.userName}}
+		  <span class="pull-right" style="margin-right:2em">
+			 <button class="btn btn-default btn-sm">Load earlier transactions</button>
+		  </span>
+	  </div>
+   </div>
+ 
+   <div class="panel panel-default" style="padding-left:0; padding-right:0;margin-top:3em; box-shadow:0 0 0 #fff; border:none">
+	  <div class="panel-body" style="">
+		  <div ng-repeat="log in transLog">
+			 <div class="col-xs-8 col-sm-7 {{!log.left ? 'pull-right' : 'pull-left'}} " style="border-radius:3px; border:1px solid #ccc; margin-bottom:1em;">
+				  <p>{{log.left ? 'Received' : (log.status==='success'?'Sent':log.status)}} : {{log.amount | currency}}</p>
+				  <p>Date : {{log.date}}</p>
+				  <p>ID : {{log.ID}} </p>
+				  <span ng-if="!log.left" style="position: absolute; right:0; bottom:0; padding:.7em;">
+				     <span ng-switch on="log.status">
+					    <i ng-switch-when="pending" class="icon fa fa-clock-o"></i>
+						<i ng-switch-when="success" class="icon fa fa-check" style="color:green"></i>
+						<i ng-switch-when="failed" class="icon fa fa-times" style="color:red"></i>
+					 </span>
+				  </span>
+			 </div>
+		  </div>
+	  </div>
+	  
+   </div>
+   <div class="footer">
+	   <div style="padding:0">
+		   <div class="input-group">
+			  <span class="input-group-addon">
+			     <i class="icon fa fa-dollar" style="font-size:1.3em;"></i>
+			  </span>
+			  <input type="text" class="form-control" placeholder="Enter amount here" style="height:3em">
+			  <span class="input-group-addon">
+			    <button class="btn btn-default btn-success btn-xs"> send</button>
+			  </span>
+		  </div>
+	   </div>
+   </div>
+</div>

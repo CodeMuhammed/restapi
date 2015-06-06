@@ -1,0 +1,23 @@
+{
+   "contactsId":"",
+   "fullName":"muhammed ali",
+   "username":"muhammed",
+   "password":"0000",
+   "accountDetails":{
+       "balance":"0",
+       "type":"NGN",
+	   "bankName":"",
+	   "NUBAN":"",
+	   "accountName":""
+   },
+   "vendorDetails": {
+	   "subscribers":"0",
+	   "description":"descibe your business. ",
+	   "url":"http://yourauthlink.com",
+	   "secret":"secret token"
+	},
+   "country":"Nigeria",
+   "profilePic":"img/pouchet_s.png",
+   "email":"e@gmail",
+   "phone":"08054020745"
+}

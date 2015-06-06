@@ -1,0 +1,66 @@
+// Core variables and mixins
+@import "variables.less";
+@import "mixins.less";
+
+// Reset and dependencies
+@import "normalize.less";
+@import "print.less";
+
+//Import components
+@import "button-groups.less";
+@import "buttons.less";
+@import "modals.less";
+
+body {
+   background-color:#fff !important;
+}
+
+.nav-custom {
+    padding-top:0 !important;
+	@media (max-width: @screen-md) {
+	   padding-left:0 !important;
+	   margin-left:0 !important;
+	}
+}
+
+.sub-nav {
+   
+   border-bottom: 1px solid #ccc;
+   border-top:none;
+   border-left:none;
+   border-right:none;
+   >li {
+      list-style:none !important;
+	  padding:1em 0;
+	  padding-bottom:14px;
+	  text-align: center;
+	  &:last-child{
+	      border:none;
+	  }
+	  &:hover{
+	      border-bottom:3px solid #000;
+		  padding-bottom: 11px;
+	  }
+   }
+}
+
+.contact {
+  //linear-gradient(to bottom, #5bc0de 0%, #2aabd2 100%);
+  &:hover {
+     background-color: @gray-lighter;
+  } 
+}
+
+.back-btn {
+   &:hover{
+       color:red;
+   }
+}
+
+.vendor-signin {
+  padding: 2em  .1em  .8em .1em;
+   >input {
+	  border-radius: 0;
+	  margin-bottom:1em;
+   }
+}
