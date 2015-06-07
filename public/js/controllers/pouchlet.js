@@ -19,7 +19,7 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 			  if(kmValue >= 1000){
 				  return kmValue+'M';
 			  }
-	     }
+	     } //
 		 return data;
 	  }
   });
