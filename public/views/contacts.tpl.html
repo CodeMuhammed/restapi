@@ -11,9 +11,10 @@
 		   <div class="alert alert-warning" ng-show="contacts.length===0">
 		       THIS SHOWS BECAUSE THE USER LIST IS EMPTY. click the user plus to get started
 		   </div>
-		   <div style="padding:.3em  .1em  .3em .1em" class="contact" ng-repeat="contact in contacts | filter:contactFilter | orderBy:'color'" > 
+		   <div style="padding:1em" class="contact" ng-repeat="contact in contacts | filter:contactFilter | orderBy:'color'" > 
 			  
 			  <div class="btn-group pull-right" style="padding-top:.5em;">
+			    
 				  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 					<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
 					<span class="caret"></span>
@@ -27,13 +28,11 @@
 					   <a href="#"><i class="icon fa fa-circle" style="color: {{color}}"></i> {{color}}</a>
 					</li>
 				  </ul>
+				 
 			  </div>
-			  <div style="padding:0" ng-click = "displayTransFor(contact)">
-				  <span style="color: #ccc; padding-top:.5em; padding-right:1em;">
-					{{contact.userId}}
-				  </span>
-			  </div>
-			  
+			   <span style="color: #ccc; padding-top:.5em; padding-right:1em;" class="" ng-click = "displayTransFor(contact)">
+				  {{contact.userId}}
+			   </span>
 		   </div>
 
 		</div>

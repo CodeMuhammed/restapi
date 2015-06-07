@@ -31,16 +31,49 @@ module.exports = function(){
 	
 	router.route('/addContact')
 	   .post(function(req , res){
+		   /*To add contact we will need to do the following
+		    *1.create the transaction document in the transactions collection
+			*2.Update the contact schema with the data gotten and 
+			*3.Update their contacts collections appropriately
+		   */
 		   var contactSchema = {
 				color : "red",
 				transHistoryId : '',
 				userId : '',
 				ring : "true",
-				aler : "true"
+				alert : "true"
 			};
 			
-			console.log(req.body);
-			res.status(200).send('contacts');
+			var tranSchema = {
+				"transLog" : ["This is where transaction logs will be pushed"]
+			};
+			
+			var query = req.body;
+			Transactions.insertOne(tranSchema , function(err , result){
+				if(err){
+					res.status(500).send('Not ok contact was not added 0');
+				}
+				else {
+					contactSchema.transHistoryId = result.ops[0]._id;
+					
+					//insert his contact into my contact list and vice-versa
+					contactSchema.userId = query.hisId;
+					Contacts.update({"_id":ObjectId(query.myCId)} , {"$push":{"contacts":contactSchema}} ,function(err , result){
+						if(err){
+							res.status(500).send('Not ok contact was not added 1');
+						} else {
+							contactSchema.userId = query.myId;
+							Contacts.update({"_id":ObjectId(query.hisCId)} , {"$push":{"contacts":contactSchema}} ,function(err , result){
+								if(err){
+									res.status(500).send('Not ok contact was not added 2');
+								} else {
+									res.status(200).send('okk contact addded');
+								}
+							});
+						}
+					});
+				}
+			})
 		});
 		
 		
@@ -65,7 +98,7 @@ module.exports = function(){
 		Users.find({'$or':[
 		   {'username':text},
 		   {'email':text}
-		]} , {"vendorDetails":1 ,"profilePic":1}).toArray(function(err, result){
+		]} , {"vendorDetails":1 ,"profilePic":1 , "contactsId":1}).toArray(function(err, result){
 			if(err){
 				res.status(500).send('failed to get data');
 			}

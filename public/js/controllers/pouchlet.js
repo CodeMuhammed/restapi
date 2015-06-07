@@ -19,7 +19,7 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 			  if(kmValue >= 1000){
 				  return kmValue+'M';
 			  }
-	     } //
+	     } 
 		 return data;
 	  }
   });
@@ -189,14 +189,28 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  };
 	  
 	  var addContact = function(query){
-		   $http({
-			  method: 'POST',
-			  url: 'api/addContact',
-			  data : query
-		  }).then(function(res){
-			   alert(res.data);
-		  });
-		  
+		  var contacts = this.getContacts();
+		  var exists = false;
+		  for(var i=0; i<contacts.length; i++){
+			  if(contacts[i].userId===query.hisId){
+				  exists = true;
+				  break;
+			  }
+		  }
+		  if(query.hisId===query.myId){
+			  alert('You cant add your self to your list');
+		  }
+		  else if(exists){
+			  alert('contact already in your list');
+		  } else {
+			  $http({
+				  method: 'POST',
+				  url: 'api/addContact',
+				  data : query
+			  }).then(function(res){
+				   alert(res.data);
+			  });
+		  }
 	  };
 	  
 	  var setTransHistory = function(id){
@@ -486,7 +500,8 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 		     function(data){
 				  $scope.vendor = data.vendorDetails;
 				  $scope.vendorLogo = data.profilePic;
-				  $scope.id = data._id;
+				  $scope.userId = data._id;
+				  $scope.contactsId = data.contactsId;
 				  $scope.searching  = false;
 				  $scope.searchComplete = true;
 			  }
@@ -496,7 +511,9 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  $scope.addContact = function(){
 		  var query = {
 			  "myId":user._id,
-			  "hisId":$scope.id
+			  "hisId":$scope.userId,
+			  "myCId":user.contactsId,
+			  "hisCId": $scope.contactsId
 		  };
 		  
 		  dataService.addContact(query);
