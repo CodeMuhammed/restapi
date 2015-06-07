@@ -29,22 +29,37 @@ module.exports = function(){
 		return next();
 	});
 	
-	router.get('/contacts/:id' , function(req , res){
-		console.log('contacts id : '+req.id);
-		Contacts.find({'_id' : ObjectId(req.id)}).toArray(function(err , result){
-		   return res.status(200).send(result[0]);
+	router.route('/addContact')
+	   .post(function(req , res){
+		   var contactSchema = {
+				color : "red",
+				transHistoryId : '',
+				userId : '',
+				ring : "true",
+				aler : "true"
+			};
+			
+			console.log(req.body);
+			res.status(200).send('contacts');
 		});
-	});
-	
+		
+		
+	router.route('/contacts/:id')
+		.get( function(req , res){
+			console.log('contacts id : '+req.id);
+			Contacts.find({'_id' : ObjectId(req.id)}).toArray(function(err , result){
+			   return res.status(200).send(result[0]);
+			});
+		});
+		
 	router.get('/transactions/:id' , function(req , res){
-		console.log('transactions id : '+req.id);
 		Transactions.find({'_id' : ObjectId(req.id)}).toArray(function(err , result){
+		   console.log(result[0]);
 		   return res.status(200).send(result[0]);
 		});
 	});
 	
 	router.get('/search' , function(req , res){
-		console.log(' gotten');
 		var text = req.query.searchText
 		console.log(text);
 		Users.find({'$or':[
@@ -55,8 +70,9 @@ module.exports = function(){
 				res.status(500).send('failed to get data');
 			}
 			if(!result[0]){
-				res.status(200).send('No user found');
+				res.status(400).send('No user found');
 			} else {
+				console.log(result[0]);
 				res.status(200).send(result[0]);
 			}
 			
@@ -64,6 +80,23 @@ module.exports = function(){
 		
 		
 	});
+	
+	router.route('/user')
+	   .put(function(req ,res){
+		   console.log(req.body);
+		   req.body._id = ObjectId(req.body._id);
+		   Users.update({"_id":ObjectId(req.body._id)} , req.body ,  function(err , result){
+			    if(err){
+					console.log('update err');
+					res.sendStatus(500);
+				} else {
+					console.log('update ok');
+				    res.status(200).send('Upadate ok');
+				}
+				
+		   });
+		   
+	   });
 	
 	return router;
 };

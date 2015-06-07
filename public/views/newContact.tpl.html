@@ -12,7 +12,7 @@
 			   <div class="panel-body">
 				   <div class="input-group" style="padding-bottom:.4em;">
 					  <input type="text" class="form-control" style="border-radius: 0px !important;" placeholder="Search for contact by email or username" ng-model="searchText">
-					  <span class="input-group-addon" ng-click="search()">
+					  <span class="input-group-addon" ng-click="search(searchText)">
 						<i class="icon fa fa-search" style="font-size:1.3em;"></i>
 					  </span>
 				   </div>
@@ -30,7 +30,7 @@
 					  <label>Please enter your pouchet username and password</label>
 					  <input type="text" class="form-control" placeholder="User Name" required>	
 					  <input type="password" class="form-control" placeholder="Password" required>
-					  <button class="btn btn-success btn-sm"><i class="icon fa fa-plus"> add contact </i></button>
+					  <button class="btn btn-success btn-sm" ng-click="addContact()"><i class="icon fa fa-plus"> add contact </i></button>
 				   </div>
 			   </div>
 			   

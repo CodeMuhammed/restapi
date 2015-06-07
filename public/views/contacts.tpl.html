@@ -11,7 +11,6 @@
 		   <div class="alert alert-warning" ng-show="contacts.length===0">
 		       THIS SHOWS BECAUSE THE USER LIST IS EMPTY. click the user plus to get started
 		   </div>
-		   
 		   <div style="padding:.3em  .1em  .3em .1em" class="contact" ng-repeat="contact in contacts | filter:contactFilter | orderBy:'color'" > 
 			  
 			  <div class="btn-group pull-right" style="padding-top:.5em;">
@@ -30,10 +29,8 @@
 				  </ul>
 			  </div>
 			  <div style="padding:0" ng-click = "displayTransFor(contact)">
-			     <img ng-src={{contact.imgSrc}} height="40">
-				   {{contact.userName}}
-				  <span class="pull-right" style="color: #ccc; padding-top:.5em; padding-right:1em;">
-					{{contact.lastTranDate}}
+				  <span style="color: #ccc; padding-top:.5em; padding-right:1em;">
+					{{contact.userId}}
 				  </span>
 			  </div>
 			  

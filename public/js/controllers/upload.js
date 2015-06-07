@@ -4,7 +4,7 @@
 var app = angular.module('fileUpload', [ 'ngFileUpload' ]);
 var version = '4.1.2';
 
-app.controller('MyCtrl', [ '$scope', '$http', '$timeout', '$compile', 'Upload', function($scope, $http, $timeout, $compile, Upload) {
+app.controller('MyCtrl', [ '$scope','$rootScope', '$http', '$timeout', '$compile', 'Upload', function($scope, $rootScope ,  $http, $timeout, $compile, Upload) {
 	$scope.usingFlash = FileAPI && FileAPI.upload != null;
 	$scope.fileReaderSupported = window.FileReader != null && (window.FileAPI == null || FileAPI.html5 != false);
 
@@ -59,7 +59,7 @@ app.controller('MyCtrl', [ '$scope', '$http', '$timeout', '$compile', 'Upload', 
 		file.upload.then(function(res) {
 			$timeout(function() {
 				file.result = res.data;
-				alert(res);
+				$rootScope.$broadcast('uploaded' , {url : res.data});
 			});
 		}, function(response) {
 		});

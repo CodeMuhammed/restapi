@@ -24,8 +24,8 @@ module.exports = function(dbName , authObj){
 					openedColls.Transactions = db.collection('Transactions');
 					DBOpened = true;
 					
-					/**db.collection('Tests').insertOne({"data":"this data"} , function(err , result){
-						console.log(result);
+					/*db.collection('Tests').update({"data":"this data"} ,{} ,  function(err , result){
+						console.log(result.result.ok);
 					});*/
 					return cb();
 				}

@@ -2,30 +2,23 @@ var express = require('express');
 var router = express.Router();
 module.exports = function(passport){
   
-   router.get('/signinResult' , function(req , res){
-	   if(!req.isAuthenticated()){
+   router.get('/reason' , function(req , res){
+	   console.log('reason called');
+	   if(req.isAuthenticated()){
+		   res.status(200).send(req.user);
+	   } else {
 		   res.status(401).send('invalid username or password');
-	   } else {
-		   res.send(req.user);
-	   }
-   });
-   
-   router.get('/signupResult' , function(req , res){
-	   if(!req.isAuthenticated()){
-		   res.status(401).send('User details not valid');
-	   } else {
-		   res.send(req.user);
 	   }
    });
    
    router.post('/signup' ,  passport.authenticate('signup' , {
-		successRedirect : '/auth/signupResult',
-		failureRedirect : '/auth/signupResult'
+		successRedirect : '/auth/reason',
+		failureRedirect : '/auth/reason'
     }));
 
 	router.post('/login' ,  passport.authenticate('login' , {
-		successRedirect : '/auth/signinResult',
-		failureRedirect : '/auth/signinResult'
+		successRedirect : '/auth/reason',
+		failureRedirect : '/auth/reason'
 	}));
 	
 

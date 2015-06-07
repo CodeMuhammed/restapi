@@ -1,8 +1,8 @@
 {
    "contactsId":"",
-   "fullName":"muhammed ali",
-   "username":"muhammed",
-   "password":"0000",
+   "fullName":"",
+   "username":"",
+   "password":"",
    "accountDetails":{
        "balance":"0",
        "type":"NGN",
@@ -18,6 +18,6 @@
 	},
    "country":"Nigeria",
    "profilePic":"img/pouchet_s.png",
-   "email":"e@gmail",
-   "phone":"08054020745"
+   "email":"email",
+   "phone":"+234"
 }

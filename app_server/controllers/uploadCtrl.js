@@ -1,19 +1,23 @@
+var fs = require('fs');
+var path  = require('path');
+
 module.exports =function(app) {
-	var fs = require('fs');
+	
 	var serverUpload = function(req , res){
 		var namedFile='';
 		req.busboy.on('file' , function(fieldname , file , filename ,encoding  , mimetype){
-			var ws = fs.createWriteStream('upload' + fieldname +filename);
+			namedFile=path.join('public' , 'img' ,  'upload' + fieldname +filename);
+			var ws = fs.createWriteStream(namedFile);
 			file.pipe(ws , {"end":false});
 			
 			file.on('end'  ,function(){
-				namedFile = 'upload' + fieldname +filename;
+				console.log('upload ended');
 			});
 		});
 		
 		req.busboy.on('finish' , function(){
 			console.log('Busboy is finished');
-			res.status(201).send(namedFile);
+			res.status(201).send(namedFile.substr(7));
 		});
 	};
 

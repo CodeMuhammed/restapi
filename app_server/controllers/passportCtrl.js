@@ -34,7 +34,7 @@ module.exports = function(passport){
 
 	passport.deserializeUser(function(_id , done){
 		//query database or cache for actual data
-		console.log('user deserialized ');
+		console.log('user deserialized ' + _id);
 		Users.find({'_id' : ObjectId(_id)}).toArray(function(err , result){
 			if(err){
 				return done(err ,false);

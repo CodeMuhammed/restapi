@@ -6,46 +6,6 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  delete $httpProvider.defaults.headers.common['X-Requested-With'];
   });
   
-  app.filter('aggregateTrans' , function(/*Dependency injections*/ dataService , $filter){
-	  return function(/*worker arguments*/data){
-		  if(angular.isObject(data)){
-			  var keys = Object.keys(data);
-			  var user = dataService.getUser();
-			  if(keys.length!==2){
-				  return data;
-			  }
-			  else{
-				  if(angular.isArray(data[keys[0]]) && angular.isArray(data[keys[1]])){
-					  
-					  if(angular.isDefined(data[user.username])){
-						  /*@TODO*/
-						  console.log('valid trans data');
-						  var newData = data[user.username];
-						  var otherUser = (keys[0]!==user.username ? keys[0] : keys[1]);
-						  for(var i=0; i<data[otherUser].length; i++){
-							  data[otherUser][i].left = true; //this makes it clear which data are pulled to the left of the view
-							  if(data[otherUser][i].status==='success'){
-								  newData.push(data[otherUser][i]);
-							  }
-						  }
-						  return $filter('orderBy')(newData , 'date');
-					  } else {
-						  console.log('invalid data passed into the aggregateTrans filter');
-						  return [];
-					  }
-				     
-				  } 
-				  else{
-					  return data;
-				  }
-			  }
-		  } 
-		  else {
-			  return data;
-		  }
-	  }
-  });
-  
   app.filter('countFilter' , function(){
 	  return function(data){
 	     if(angular.isString(data) || angular.isNumber(data)){
@@ -71,16 +31,12 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
   });
   
   app.service('authService' , function($http , $q ,$resource, dataService , viewService){
-	  var signupPromise = $q.defer();
-	  var loginPromise = $q.defer();
-	  var logoutPromise = $q.defer();
-	  var loginStatus = false;
-	  
 	  //This handles signUp in the following ways
 	  //1. Passes the  data to the server which creates its entry in the
 	  //   database and returns the  user data
 	  //2. The returned data is then passed into the login service to login user automatically
 	  var signup = function(signupDetails){
+		  var signupPromise = $q.defer();
 		  $http({
 		     method : 'POST',
 			 url : '/auth/signup',
@@ -100,6 +56,8 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  };
 	  
 	  var login = function(loginDetails){
+		  var loginPromise = $q.defer();
+		  var loginStatus = false;
 		  $http({
 		     method : 'POST',
 			 url : '/auth/login',
@@ -127,26 +85,23 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  
   
 	  var logout  = function(){
+		  var logoutPromise = $q.defer();
 		  $http({
 		     method : 'GET',
 			 url : '/auth/logout'
 		  }).success(function(data){
+			    dataService.reset();
 			    logoutPromise.resolve(data);
 		        viewService.setView('homepage');
 			 }); 
 		  
 		  return logoutPromise.promise;
 	  };
-	  
-	  var isLoggedIn = function(){
-		  return loginStatus;
-	  };
-	  
+	 
 	  return {
 		  login : login,
 		  logout: logout,
-		  signup : signup,
-		  isLoggedIn : isLoggedIn
+		  signup : signup
 	  };
   });
   
@@ -174,17 +129,25 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
   });
   
   app.factory('dataService' , function($http , $q , viewService){
-	  
 	  var contactsObj = {};
 	  var activeContact = {};
 	  var transHistory = {};
-	  var user = {};
+	  var User = {};
 	  var newUserSchema;
 	  var userPromise  = $q.defer();
+	  var updateUserPromise = $q.defer();
 	  var activeContactPromise = $q.defer();
 	  var newUserSchemaPromise = $q.defer();
 	  var searchPromise = $q.defer();
 	  
+	  var reset = function(){
+		  contactsObj = {};
+	      activeContact = {};
+		  transHistory = {};
+		  User = {};
+		  newUserSchema;
+	  };
+	 
 	  var getNewUserSchema = function(){
 		  if(!newUserSchema){
 			  $http({
@@ -204,8 +167,8 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  };
 	  
 	  var setUser = function(validUser){
-		  user = validUser;
-		  setContacts(user.contactsId);
+		  User = validUser;
+		  setContacts(User.contactsId);
 		  return  userPromise.promise;
 	  };
 	  
@@ -223,6 +186,17 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 		  activeContact = contact;
 		  setTransHistory(contact.transHistoryId);
 		  return activeContactPromise.promise;
+	  };
+	  
+	  var addContact = function(query){
+		   $http({
+			  method: 'POST',
+			  url: 'api/addContact',
+			  data : query
+		  }).then(function(res){
+			   alert(res.data);
+		  });
+		  
 	  };
 	  
 	  var setTransHistory = function(id){
@@ -253,32 +227,55 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  };
 	  
 	  var getUser = function(){
-		  return user;
+		  return User;
 	  };
 	  
-	  var search = function(searchText){
+	  var updateUser = function(user){
+		  $http({
+			  method : 'PUT',
+			  url  : 'api/user',
+			  data : user
+		  })
+		  .success(function(result){
+			  alert(result);
+			  User = user;
+			  updateUserPromise.resolve(User);
+		  })
+		  .error(function(err){
+			  alert(err);
+			  updateUserPromise.reject(err);
+		  });
+		  return updateUserPromise.promise;
+	  };
+	  
+	  var search = function(text){
+		  var searchPromise = $q.defer();
 		  $http({
 			  method:'GET',
 			  url : '/api/search',
-			  params : {"searchText" : searchText}
+			  params : {"searchText" : text}
 		  })
 		  .success(function(data){
+			  console.log(data);
 			  searchPromise.resolve(data);
 		  })
 		  .error(function(err){
-			  searchPromise.reject(err);
+			  alert('search error');
 		  });
 		  return searchPromise.promise;
 	  };
 	  
 	  return {
+		  reset : reset,
 		  getContacts : getContacts,
 		  setActiveContact : setActiveContact,
 		  getActiveContact : getActiveContact,
+		  addContact : addContact,
 		  getTransHistory :  getTransHistory ,
 		  getNewUserSchema : getNewUserSchema,
 		  getUser : getUser,
 		  setUser : setUser,
+		  updateUser : updateUser,
 		  search : search
 	  };
 	  
@@ -318,7 +315,7 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
   app.controller('homepageCtrl' , function($scope , $rootScope , authService , dataService){
 	  //default countries to select from when doing signup
 	  $scope.countries = ['Nigeria' , 'Ghana'];
-	  $scope.sanity = {"password":"0000","agree":true};
+	  
 	  //default form view to display
 	  $scope.formView = 'signin';
 	  
@@ -388,16 +385,14 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	  $scope.colors = [ 'gray', 'blue', 'green' , 'yellow' ,'red'];
 	  $scope.contacts=dataService.getContacts();
 	  
-	  
 	  $scope.displayTransFor = function(contact){
+		  console.log(contact);
 		  dataService.setActiveContact(contact).then(
 		  function(status){
 			  
 		  } , function(err){
 			  alert(err);
-			  authService.logout().then(function(status){
-				  alert(status);
-			  });
+			  authService.logout();
 		  });  
 	  };
 	  
@@ -418,9 +413,9 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 		};
    });
    
-   app.controller('contactCtrl' , function($scope , $filter ,  dataService){
+   app.controller('contactCtrl' , function($scope ,  dataService){
 	   $scope.contact = dataService.getActiveContact();
-	   $scope.transLog = $filter('aggregateTrans')(dataService.getTransHistory().transLog);
+	   $scope.transLog = dataService.getTransHistory();
    });
    
     app.directive('userProfile' , function(){
@@ -448,9 +443,20 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 	   };
 	   
 	   $scope.save = function(user){
-		   $scope.user = user;
-		   $scope.edit = false;
+		   dataService.updateUser(user).then(
+			   function(user){
+				   $scope.user = user;
+		           $scope.edit = false;
+			   } , function(err){
+				   
+			   });
 	   }
+	   
+	   //listens for  when profile image is changed
+	   $scope.$on('uploaded' , function(event , args){
+		   $scope.user.profilePic = args.url;
+		   alert($scope.user.profilePic);
+	   });
    });
   
   
@@ -463,30 +469,38 @@ var app = angular.module('pouchlet' , ['fileUpload' , 'ngResource', 'btford.sock
 		};
    });
    app.controller('newContactCtrl' , function($scope , dataService){
+	  var searchedContact = '';
+	  var user = dataService.getUser();
 	  function reset (){
 		  $scope.vendor = {};
 	      $scope.searching  = false;
 		  $scope.searchComplete = false;
+		  searchedContact = '';
 	  }
 	  
-	  $scope.search = function(){
+	  $scope.search = function(searchText){
 		  reset();
+		  searchedContact = searchText;
 		  $scope.searching  = true;
-		  
-		  dataService.search($scope.searchText).then(
-		  function(result){
-			  console.log(result);
-			  $scope.vendor = result.vendorDetails;
-			  $scope.vendorLogo = result.profilePic;
-			  $scope.searching  = false;
-			  $scope.searchComplete = true;
-			  alert($scope.vendorLogo);
-		  }
-		  , function(err){
-			  alert(err);
-		  });
+		  dataService.search(searchText).then(
+		     function(data){
+				  $scope.vendor = data.vendorDetails;
+				  $scope.vendorLogo = data.profilePic;
+				  $scope.id = data._id;
+				  $scope.searching  = false;
+				  $scope.searchComplete = true;
+			  }
+		  );
 	  };
 	  
+	  $scope.addContact = function(){
+		  var query = {
+			  "myId":user._id,
+			  "hisId":$scope.id
+		  };
+		  
+		  dataService.addContact(query);
+	  }  
   });
   
   

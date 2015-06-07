@@ -25,19 +25,8 @@
  
    <div class="panel panel-default" style="padding-left:0; padding-right:0;margin-top:3em; box-shadow:0 0 0 #fff; border:none">
 	  <div class="panel-body" style="">
-		  <div ng-repeat="log in transLog">
-			 <div class="col-xs-8 col-sm-7 {{!log.left ? 'pull-right' : 'pull-left'}} " style="border-radius:3px; border:1px solid #ccc; margin-bottom:1em;">
-				  <p>{{log.left ? 'Received' : (log.status==='success'?'Sent':log.status)}} : {{log.amount | currency}}</p>
-				  <p>Date : {{log.date}}</p>
-				  <p>ID : {{log.ID}} </p>
-				  <span ng-if="!log.left" style="position: absolute; right:0; bottom:0; padding:.7em;">
-				     <span ng-switch on="log.status">
-					    <i ng-switch-when="pending" class="icon fa fa-clock-o"></i>
-						<i ng-switch-when="success" class="icon fa fa-check" style="color:green"></i>
-						<i ng-switch-when="failed" class="icon fa fa-times" style="color:red"></i>
-					 </span>
-				  </span>
-			 </div>
+		  <div>
+			 {{transLog}}
 		  </div>
 	  </div>
 	  
