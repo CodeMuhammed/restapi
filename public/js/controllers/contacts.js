@@ -15,6 +15,9 @@ app.directive('contacts' , function(){
 	  $scope.colors = [ 'gray', 'blue', 'green' , 'yellow' ,'red'];
 	  $scope.contactsId = dataService.getContacts()._id;
 	  $scope.contacts=dataService.getContacts().contacts;
+	  $scope.user_img = dataService.getUserImg();
+	  
+	  console.log($scope.user_img);
 	  
 	  $scope.displayTransFor = function(contact){
 		  console.log(contact);

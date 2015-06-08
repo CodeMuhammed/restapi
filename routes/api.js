@@ -171,7 +171,7 @@ module.exports = function(){
 		
 	    Users.find(
 		   {"_id": {"$in":req.body}} , 
-		   {"profilePic":1 , "username":1}
+		   {"profilePic":1 , "username":1}//
 		).toArray(function(err , result){
 			if(err){
 				res.status(500).send('Cannot complete operation user_image_array');

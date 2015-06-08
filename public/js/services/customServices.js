@@ -118,6 +118,7 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	  var activeContact = {};
 	  var transHistory = {};
 	  var User = {};
+	  var contactIds = [];
 	  var newUserSchema;
 	  var user_image;
 	  
@@ -127,8 +128,8 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	  var addContactPromise = $q.defer();
 	  var updateContactPromise = $q.defer();
 	  var newUserSchemaPromise = $q.defer();
-	  var userImgPromise = $q.defer();
 	  var searchPromise = $q.defer();
+	  
 	  
 	  var reset = function(){
 		  contactsObj = {};
@@ -136,6 +137,7 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 		  transHistory = {};
 		  User = {};
 		  newUserSchema;
+		  contactIds = [];
 	  };
 	 
 	  //This function gets the schema the user will fill when doing a
@@ -173,17 +175,14 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 			  url: 'api/contacts/'+id
 		  })
 		  .success(function(data){
+			    contactIds = [];
 			    contactsObj=data;
-				var contactIds = [];
 				for(var i=0; i<data.contacts.length; i++){
 					contactIds.push(data.contacts[i].userId);
 				}
 				
-				getUserImg(contactIds).then(function(result){
-					userPromise.resolve();
-				} , function(err){
-					userPromise.reject(err);
-				});
+			    setUserImg(contactIds);
+				
 		  })
 		  .error(function(err){
 			  alert(err);
@@ -193,9 +192,9 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	  //Since we are referencing our contacts by ids , the only way to get other
 	  //volatile info efficiently to display for the user is to get an array con-
 	  //taining  those info from the server by sending it an array of ids
-	  var getUserImg = function(idArray){
+	  var setUserImg = function(idArray){
 		  //Get the user-image combination from the server
-		  if(!user_image){
+		  if(true){
 			   //get the user img data from the server
 			   $http({
 				   method : 'POST',
@@ -203,19 +202,14 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 				   data : idArray
 			   })
 			   .success(function(data){
-				   console.log(data);
-				   userImgPromise.resolve('ok');
+				   user_image = data;
+				   userPromise.resolve();
 			   })
 			   .error(function(err){
 				   alert(err);
+				   userPromise.reject();
 			   });
-			   userImgPromise.resolve('ok');
 		  }
-		  else {
-			  userImgPromise.resolve('ok');
-		  }
-		
-		  return userImgPromise.promise;
 	  };
  
 	  var setActiveContact = function(contact){
@@ -290,13 +284,11 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 		  return contactsObj;
 	  };
 	  
+	  
 	  var getActiveContact = function(){
 		return   activeContact;
 	  };
 	  
-	  var getContactIds = function(){
-		  return contactIds;
-	  };
 	  
 	  var getTransHistory = function(){
 		 return transHistory;
@@ -304,6 +296,10 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	  
 	  var getUser = function(){
 		  return User;
+	  };
+	  
+	  var getUserImg = function(){
+		 return user_image
 	  };
 	  
 	  var updateUser = function(user){
@@ -348,7 +344,7 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 		  getActiveContact : getActiveContact,
 		  addContact : addContact,
 		  updateContact : updateContact,
-		  getContactIds : getContactIds,
+		  getUserImg : getUserImg,
 		  getTransHistory :  getTransHistory ,
 		  getNewUserSchema : getNewUserSchema,
 		  getUser : getUser,
