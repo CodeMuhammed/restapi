@@ -1,4 +1,5 @@
 var MongoClient  = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectId;
 var assert = require('assert');
 var DBOpened = false;
 
@@ -24,9 +25,13 @@ module.exports = function(dbName , authObj){
 					openedColls.Transactions = db.collection('Transactions');
 					DBOpened = true;
 					
-					/*db.collection('Tests').update({"data":"this data"} ,{} ,  function(err , result){
-						console.log(result.result.ok);
-					});*/
+					/*db.collection('Tests').insert(
+					   {name:'hello'},
+                      function(err , result){
+						  console.log(result.ops[0]._id.toString());
+					  }					   
+					);*/
+					
 					return cb();
 				}
 			});

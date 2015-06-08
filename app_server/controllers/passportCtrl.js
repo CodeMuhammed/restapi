@@ -56,7 +56,10 @@ module.exports = function(passport){
 		if(req.isAuthenticated()){
 			return done(null , req.user);
 		} else {
-			Users.find({'username' : username}).toArray(function(err , result){
+			Users.find({'$or':[
+			   {'username':username},
+			   {'email':username}
+			]}).toArray(function(err , result){
 				if(err){
 					return done(err);
 				}

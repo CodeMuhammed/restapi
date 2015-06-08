@@ -17,8 +17,10 @@
 					  </span>
 				   </div>
 				   <div class="vendor-signin" ng-show="searchComplete">
-					  <img src="{{vendorLogo}}" height="50">
+				      
+					  <img ng-src="{{vendorLogo}}" height="50">
 					  <button class="btn btn-default btn-xs pull-right" style="margin-top:.8em"> {{vendor.subscribers | countFilter}} subscribers </button>
+					  <h4>{{fullName}}</h4>
 					  <hr />
 					  <h4>Description</h4>
 					  <p>
