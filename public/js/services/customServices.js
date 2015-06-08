@@ -8,7 +8,7 @@ app.factory('mySocket' , function(socketFactory , $window){
 	  });
   });
   
-app.service('authService' , function($http , $q ,$resource, dataService , viewService){
+app.service('authService' , function($http , $rootScope , $q ,$resource, dataService , viewService){
 	  //This handles signUp in the following ways
 	  //1. Passes the  data to the server which creates its entry in the
 	  //   database and returns the  user data
@@ -43,10 +43,10 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 			 url : '/auth/login',
 			 data : loginDetails
 		  }).success(function(data){
-			     dataService.setUser(data).then(function(){
+			 dataService.setUser(data).then(function(){
 				 loginStatus = true;
 				 viewService.setView('contacts');
-			 }); 
+			 });
 		  }).error(function(err){
 			  loginStatus = false;
 			  loginPromise.reject(err);
@@ -79,7 +79,7 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	 
 	  var refresh = function(){
 		  //@TODO does what refreshes the page automatically when a user logs out then in again
-		  login();
+		   login();
 	  };
 	  
 	  return {
@@ -96,7 +96,6 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	  };
 	  
 	  var setView = function(newView){
-		  
 		  if(angular.isString(newView)){
 			  view.view=newView;
 		  }
@@ -118,7 +117,6 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 	  var activeContact = {};
 	  var transHistory = {};
 	  var User = {};
-	  var contactIds = [];
 	  var newUserSchema;
 	  var user_image;
 	  
@@ -137,7 +135,6 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 		  transHistory = {};
 		  User = {};
 		  newUserSchema;
-		  contactIds = [];
 	  };
 	 
 	  //This function gets the schema the user will fill when doing a
@@ -175,7 +172,7 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 			  url: 'api/contacts/'+id
 		  })
 		  .success(function(data){
-			    contactIds = [];
+			    var contactIds = [];
 			    contactsObj=data;
 				for(var i=0; i<data.contacts.length; i++){
 					contactIds.push(data.contacts[i].userId);
@@ -256,7 +253,7 @@ app.service('authService' , function($http , $q ,$resource, dataService , viewSe
 			  data : query
 		  })
 		  .success(function(result){
-			  alert(result);
+			  console.log(result);
 			  updateContactPromise.resolve(true);
 		  })
 		  .error(function(err){

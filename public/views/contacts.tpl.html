@@ -29,8 +29,11 @@
 				  </ul>
 				 
 			  </div>
-			   <span style="color: #ccc; padding-top:.5em; padding-right:1em;" class="" ng-click = "displayTransFor(contact)">
-				  {{contact.userId}}
+			   <span style="padding-top:.5em; padding-right:1em;" class="" ng-click = "displayTransFor(contact)">
+				  <img ng-src="{{contact.profilePic}}" width="40">
+				  <span style="margin-left:2em">
+				    {{contact.username}}
+				  </span>
 			   </span>
 		   </div>
 
@@ -43,6 +46,6 @@
 		</div>
 		
 		<div style="text-align:center; margin-top:2em" class="sticky-footer ">
-			<h5>&copy; 2015 pouchlet inc.</h5>
+			<h5>&copy; 2015 billpouch inc.</h5>
 		</div>
 	</div>
