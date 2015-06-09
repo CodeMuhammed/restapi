@@ -28,7 +28,7 @@ module.exports = function(dbName , authObj){
 					/*db.collection('Tests').insert(
 					   {name:'hello'},
                       function(err , result){
-						  console.log(result.ops[0]._id.toString());
+						  console.log(result);
 					  }					   
 					);*/
 					

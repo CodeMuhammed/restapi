@@ -247,15 +247,27 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  //METHOD DELETE CONTACT
 	  var deleteContact = function(query){
 		  var promise = $q.defer();
-		  alert(angular.toJson(query));
+		  //alert(angular.toJson(query));
 		  
 		  $http({
 			  method : 'DELETE',
 			  url : 'api/contact',
-			  data: query
+			  params: query
 		  })
 		  .success(function(data){
+			  //after deleting from the server lets delete from the contacts list and change the view
+			  for (var i=0; i<contactsObj.contacts.length; i++){
+				  var temp = contactsObj.contacts[i];
+				  if(temp.userId===query.hisId){
+					  contactsObj.contacts.splice(i , 1);
+					  break;
+				  }
+			  }
+			  
 			  alert(data);
+			  viewService.setView('contacts');
+			  
+			  
 		  })
 		  .error(function(err){
 			  alert(err);

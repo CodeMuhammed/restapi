@@ -30,12 +30,12 @@ module.exports = function(){
 	});
 	
 	router.route('/contact')
+	   /*To add contact we will need to do the following
+		*1.create the transaction document in the transactions collection
+		*2.Update the contact schema with the data gotten and 
+		*3.Update their contacts collections appropriately
+	   */
 	   .post(function(req , res){
-		   /*To add contact we will need to do the following
-		    *1.create the transaction document in the transactions collection
-			*2.Update the contact schema with the data gotten and 
-			*3.Update their contacts collections appropriately
-		   */
 		   var contactSchema = {
 				color : "red",
 				transHistoryId : '',
@@ -76,6 +76,10 @@ module.exports = function(){
 			})
 		})
 		
+		/*To update a contact , we will need to do the following 
+		 *1.Remove the old contact from the contact list that matches the id
+		 *2.If this is successful ,  we replace it with the new contact definition
+		*/
 		.put(function(req , res){
 			console.log(req.body);
 			//look for the contact in the contacts collection array that matches the contact to be updated
@@ -107,12 +111,68 @@ module.exports = function(){
 			);
 		})
 		
+		
+		/*The Delete route is pretty elaborate But it really is very simple and i will try to explain in detail what it is doing
+		 *First note that when doing $unset to delete an element from an array , it replaces the value at that position with a null
+		 *which means that for the data to be consistent we have to clean up the null values after we delete any thing
+		*/
 		.delete(function(req , res){
-			console.log('command for deleting contact recieved');
-			res.status(200).send('command for deleting contact recieved');
+			console.log(req.query);
+			
+			//delete the contact in my list
+			Contacts.update({"_id":ObjectId(req.query.myCId) , "contacts.userId":req.query.hisId} , {
+				"$unset":{
+					"contacts.$":1
+				}
+			} , 
+			function(err , result){
+				if(err){
+					res.status(500).send('delete not successful 1');
+				} else {
+					//clean my list of null values
+					Contacts.update({"_id":ObjectId(req.query.myCId)} ,{
+						"$pull":{
+							"contacts":null
+						}
+					} ,
+					function(err ,result){
+						if(err){
+							res.status(500).send('delete not successful 2');
+						}
+						else{
+							//Delete the contact in his list
+							Contacts.update({"_id":ObjectId(req.query.hisCId) , "contacts.userId":req.query.myId} , {
+								"$unset":{
+									"contacts.$":1
+								}
+							}, 
+							function(err , result){
+								if(err){
+									res.status(500).send('delete not successful 3');
+								} else {
+									//clean his list of null values
+									Contacts.update({"_id":ObjectId(req.query.hisCId)} ,{
+										"$pull":{
+											"contacts":null
+										}
+									} ,
+					               function(err , result){
+										 if(err){
+											 res.status(500).send('delete not successful 4');
+										 } else {
+											 res.status(200).send('Delete Ok');
+										 }
+									});
+									
+								}
+							});
+						}
+					})
+				}
+			});
 		});
 		
-		
+    //This returns the contact list from the contact list collection that matches the id in the url params
 	router.route('/contacts/:id')
 		.get( function(req , res){
 			console.log('contacts id : '+req.id);
@@ -120,7 +180,8 @@ module.exports = function(){
 			   return res.status(200).send(result[0]);
 			});
 		});
-		
+    
+	//This returns the transaction log from the transactions collection that matches the id in the url params
 	router.get('/transactions/:id' , function(req , res){
 		console.log(req.id);
 		Transactions.find({'_id' : ObjectId(req.id)}).toArray(function(err , result){
@@ -129,6 +190,8 @@ module.exports = function(){
 		});
 	});
 	
+	//This searches the user collection and return the found contact ..This is usually done when we want to search and
+	//add a new user
 	router.get('/search' , function(req , res){
 		var text = req.query.searchText
 		console.log(text);
@@ -151,6 +214,7 @@ module.exports = function(){
 		
 	});
 	
+	//This updates the user ..when the profile preferences changes from the client side
 	router.route('/user')
 	   .put(function(req ,res){
 		   console.log(req.body);
@@ -168,6 +232,7 @@ module.exports = function(){
 		   
 	   });
 	
+	//This returns certain fields from the user collection where the documents matches an array of ids
 	router.post('/user_image_array' , function(req , res){
 		//convert the ids in the array to object ids
 		for(var i=0; i<req.body.length; i++){
@@ -181,7 +246,6 @@ module.exports = function(){
 			if(err){
 				res.status(500).send('Cannot complete operation user_image_array');
 			} else {
-				console.log(result);
 				res.status(200).send(result);
 			}
 		});
