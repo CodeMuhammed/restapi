@@ -121,12 +121,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  var user_image;
 	  
 	  var userPromise  = $q.defer();
-	  var updateUserPromise = $q.defer();
 	  var activeContactPromise = $q.defer();
-	  var addContactPromise = $q.defer();
-	  var updateContactPromise = $q.defer();
-	  var newUserSchemaPromise = $q.defer();
-	  var searchPromise = $q.defer();
 	  
 	  
 	  var reset = function(){
@@ -140,6 +135,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  //This function gets the schema the user will fill when doing a
 	  //sign up
 	  var getNewUserSchema = function(){
+		  var newUserSchemaPromise = $q.defer();
 		  if(!newUserSchema){
 			  $http({
 				  method: 'GET',
@@ -215,7 +211,9 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return activeContactPromise.promise;
 	  };
 	  
+	  //METHOD ADD CONTACT
 	  var addContact = function(query){
+		  var addContactPromise = $q.defer();
 		  var contacts = contactsObj.contacts;
 		  
 		  var exists = false;
@@ -246,7 +244,28 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return addContactPromise.promise;
 	  };
 	  
+	  //METHOD DELETE CONTACT
+	  var deleteContact = function(query){
+		  var promise = $q.defer();
+		  alert(angular.toJson(query));
+		  
+		  $http({
+			  method : 'DELETE',
+			  url : 'api/contact',
+			  data: query
+		  })
+		  .success(function(data){
+			  alert(data);
+		  })
+		  .error(function(err){
+			  alert(err);
+		  });
+		  
+		  return promise.promise;
+	  }
+	  
 	  var updateContact = function(query){
+		  var updateContactPromise = $q.defer();
 		  $http ({
 			  method : 'PUT',
 			  url : 'api/contact',
@@ -300,6 +319,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  };
 	  
 	  var updateUser = function(user){
+		  var updateUserPromise = $q.defer();
 		  $http({
 			  method : 'PUT',
 			  url  : 'api/user',
@@ -341,6 +361,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  getActiveContact : getActiveContact,
 		  addContact : addContact,
 		  updateContact : updateContact,
+		  deleteContact : deleteContact,
 		  getUserImg : getUserImg,
 		  getTransHistory :  getTransHistory ,
 		  getNewUserSchema : getNewUserSchema,

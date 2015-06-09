@@ -23,16 +23,16 @@ app.directive('contacts' , function(){
 		  for(var j=0; j<$scope.user_img_array.length; j++){
 			  var temp2 = $scope.user_img_array[j];
 			  if(temp.userId === temp2._id){
-				  console.log('this was true '+i+' '+j);
+				 // console.log('this was true '+i+' '+j);
 				  temp.profilePic = temp2.profilePic;
 				  temp.username = temp2.username;
+				  temp.contactsId = temp2.contactsId;
 			  }
 		  }
 	  }
 	  
 	  //This method send the particular data to the service so that the contact view can use it
 	  $scope.displayTransFor = function(contact){
-		  console.log(contact);
 		  dataService.setActiveContact(contact).then(
 		  function(status){
 			  
@@ -52,6 +52,7 @@ app.directive('contacts' , function(){
 		  //delete patches
 		  delete(contact.profilePic);
 		  delete(contact.username);
+		  delete(contact.contactsId);
 		  
 		  // record and update contact
 		  var oldData = angular.copy(contact);
