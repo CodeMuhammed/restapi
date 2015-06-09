@@ -2,18 +2,18 @@
 		<div style="padding-left:0; padding-right:0;">
 		  
 		   <div class="input-group" style="padding-bottom:.4em;">
-              <input type="text" class="form-control" style="border-radius: 0px !important;" placeholder="Filter users" ng-model="contactFilter">
-			  <span class="input-group-addon">
+		      <span class="input-group-addon">
 				<i class="icon fa fa-filter" style="font-size:1.3em;"></i>
 			  </span>
+              <input type="text" class="form-control" style="border-radius: 0px !important;" placeholder="Filter users" ng-model="contactFilter">
 		   </div>
 		   
 		   <div class="alert alert-warning" ng-show="contacts.length===0">
-		       THIS SHOWS BECAUSE THE USER LIST IS EMPTY. click the user plus to get started
+		       THIS SHOWS BECAUSE YOUR USER LIST IS EMPTY. click the user plus to get started
 		   </div>
-		   <div style="padding:1em" class="contact" ng-repeat="contact in contacts | filter:contactFilter | orderBy:'color'" > 
+		   <div style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact" ng-repeat="contact in contacts | filter:contactFilter | orderBy:'color'" > 
 			  
-			  <div class="btn-group pull-right" style="padding-top:.5em;">  
+			  <div class="btn-group pull-right" style="margin-top:.7em;">  
 				  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 					<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
 					<span class="caret"></span>
@@ -29,18 +29,17 @@
 				  </ul>
 				 
 			  </div>
-			   <span style="padding-top:.5em; padding-right:1em;" class="" ng-click = "displayTransFor(contact)">
+			  <div style="padding-top:.5em; padding-right:1em;" class="" ng-click = "displayTransFor(contact)">
 				  <img ng-src="{{contact.profilePic}}" width="40">
 				  <span style="margin-left:2em">
 				    {{contact.username}}
 				  </span>
-			   </span>
+			 </div>
 		   </div>
 
 		</div>
 		
 		<div style="padding-left:0; padding-right:0;padding-top:.5em" >
-		   <new-contact></new-contact>
 		   <withdraw></withdraw>
 		   <pay-in></pay-in>
 		</div>
