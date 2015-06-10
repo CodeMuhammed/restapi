@@ -68,25 +68,22 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  $http({
 		     method : 'GET',
 			 url : '/auth/logout'
-		  }).success(function(data){
-			    dataService.reset();
-			    logoutPromise.resolve(data);
+		  }).success(function(status){
+			    alert(status);
+			    logoutPromise.resolve(status);
 		        viewService.setView('homepage');
+			 })
+			 .error(function(err){
+				 alert(err);
 			 }); 
 		  
 		  return logoutPromise.promise;
-	  };
-	 
-	  var refresh = function(){
-		  //@TODO does what refreshes the page automatically when a user logs out then in again
-		   login();
 	  };
 	  
 	  return {
 		  login : login,
 		  logout: logout,
-		  signup : signup,
-		  refresh :refresh
+		  signup : signup
 	  };
   });
   
@@ -255,7 +252,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 				  url: 'api/contact',
 				  data : query
 			  }).success(function(result){
-				   alert(angular.toJson('Contact added'));
+				   console.log(angular.toJson(result));
 				   contactsObj.contacts.push(result);
 				   viewService.setView('contacts');
 			  }).error(function(err){

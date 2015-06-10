@@ -13,8 +13,7 @@ var app = angular.module('pouchlet');
   
   app.controller('mainHeaderCtrl' , function($scope , $rootScope , authService){
        $scope.logout = function(){
-		   authService.logout().then(function(status){
-		   });
+		   authService.logout();
 	   };
 	   
 	   $scope.homepageAction = function(action){

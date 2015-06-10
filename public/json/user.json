@@ -15,7 +15,7 @@
 	   "description":"descibe your business. ",
 	   "url":"http://yourauthlink.com",
 	   "secret":"secret token",
-	   "userCredentials":[]
+	   "userTokens":[]
 	},
    "country":"Nigeria",
    "profilePic":"img/pouchet_s.png",

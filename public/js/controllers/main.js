@@ -18,7 +18,7 @@ var app = angular.module('pouchlet');
 		  $timeout(function(){
 			  $scope.view = viewService.getView();
 			  
-		  } , 100);
+		  } , 300);
 		  
 	   });
 	  

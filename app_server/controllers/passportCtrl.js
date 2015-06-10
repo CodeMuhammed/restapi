@@ -94,10 +94,16 @@ module.exports = function(passport){
 			//check if username already exists
 			if(result[0]){
 				return done(null , false);
+			} else {
+				createContact();
 			}
 			
-			//get Default contact schema from file
-			//create a contact list for this user
+		});
+		
+		//get Default contact schema from file
+	    //create a contact list for this user
+		function createContact() {
+			
 			Contacts.insertOne({"contacts" : []} , function(err , result){
 				if(err){
 					return done(err);
@@ -115,8 +121,7 @@ module.exports = function(passport){
 					});
 				});
 			});
-			
-		});
+		}
 		
 	}));
 

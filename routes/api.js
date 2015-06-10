@@ -51,34 +51,44 @@ module.exports = function(){
 			};
 			
 			var query = req.body;
+			
+			//Create a new transaction history that will hold the transaction references
 			Transactions.insertOne(tranSchema , function(err , result){
 				if(err){
 					res.status(500).send('Not ok contact was not added 0');
 				}
 				else {
-					contactSchema.transHistoryId = result.ops[0]._id.toString();
-					
-					//insert my contact into his contact list and vice-versa then return the
-					//contact inserted into my contact list
-					contactSchema.userId = query.myId;
-					contactSchema.type = 'bill from';
-					Contacts.update({"_id":ObjectId(query.hisCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
-						if(err){
-							res.status(500).send('Not ok contact was not added 1');
-						} else {
-							contactSchema.userId = query.hisId;
-							contactSchema.type = 'bill to';
-							Contacts.update({"_id":ObjectId(query.myCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
-								if(err){
-									res.status(500).send('Not ok contact was not added 2');
-								} else {
-									res.status(200).send(contactSchema);
-								}
-							});
-						}
-					});
+					addMineToHis(result);
 				}
-			})
+			});
+			
+			//add my contact to his contact list
+			function addMineToHis(result) {
+				contactSchema.transHistoryId = result.ops[0]._id.toString();
+				contactSchema.userId = query.myId;
+				contactSchema.type = 'bill from';
+				Contacts.update({"_id":ObjectId(query.hisCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
+					if(err){
+						res.status(500).send('Not ok contact was not added 1');
+					} else {
+						addHisToMine();
+					}
+				});
+			}
+			
+			//add his contact to my contact list
+			function addHisToMine() {
+				contactSchema.userId = query.hisId;
+				contactSchema.type = 'bill to';
+				Contacts.update({"_id":ObjectId(query.myCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
+					if(err){
+						res.status(500).send('Not ok contact was not added 2');
+					} else {
+						res.status(200).send(contactSchema);
+					}
+				});
+			}
+			
 		})
 		
 		/*To update a contact , we will need to do the following 
@@ -88,7 +98,7 @@ module.exports = function(){
 		.put(function(req , res){
 			console.log(req.body);
 			//look for the contact in the contacts collection array that matches the contact to be updated
-			
+			//and remove it from the list
 			Contacts.update(
 				{"_id":ObjectId(req.body.contactsId)} ,
 				{"$pull":{
@@ -98,22 +108,28 @@ module.exports = function(){
 					if(err){
 						res.status(500).send('Not ok 1');
 					} else {
-						Contacts.update(
-						   {"_id":ObjectId(req.body.contactsId)} ,
-						   {"$addToSet":{
-								"contacts":req.body.newData
-						   }} , 
-						   function(err  , result){
-							   if(err){
-								   res.status(500).send('Not ok 1');
-							   } else {
-								   res.status(200).send('contacts updated');
-							   }
-						   }
-						);
+						addNewContact();
 					}
 				}
 			);
+			
+			//After the removal is done , add the update version back
+			function addNewContact(){
+				Contacts.update(
+				   {"_id":ObjectId(req.body.contactsId)} ,
+				   {"$addToSet":{
+						"contacts":req.body.newData
+				   }} , 
+				   function(err  , result){
+					   if(err){
+						   res.status(500).send('Not ok 1');
+					   } else {
+						   res.status(200).send('contacts updated');
+					   }
+				   }
+				);
+			}
+			
 		})
 		
 		
@@ -122,7 +138,55 @@ module.exports = function(){
 		 *which means that for the data to be consistent we have to clean up the null values after we delete any thing
 		*/
 		.delete(function(req , res){
-			console.log(req.query);
+			
+			function doTaskD(){
+				//clean his list of null values
+				Contacts.update({"_id":ObjectId(req.query.hisCId)} ,{
+					"$pull":{
+						"contacts":null
+					}
+				} ,
+			   function(err , result){
+					 if(err){
+						 res.status(500).send('delete not successful 4');
+					 } else {
+						 res.status(200).send('Delete Ok');
+					 }
+				});
+			};
+			
+			function doTaskC(){
+				//Delete the contact in his list
+				Contacts.update({"_id":ObjectId(req.query.hisCId) , "contacts.userId":req.query.myId} , {
+					"$unset":{
+						"contacts.$":1
+					}
+				}, 
+				function(err , result){
+					if(err){
+						res.status(500).send('delete not successful 3');
+					} else {
+						doTaskD();
+					}
+				});
+			};
+			
+			function doTaskB(){
+				//clean my list of null values
+				Contacts.update({"_id":ObjectId(req.query.myCId)} ,{
+					"$pull":{
+						"contacts":null
+					}
+				} ,
+				function(err ,result){
+					if(err){
+						res.status(500).send('delete not successful 2');
+					}
+					else{
+						doTaskC();
+					}
+				})
+			};
 			
 			//delete the contact in my list
 			Contacts.update({"_id":ObjectId(req.query.myCId) , "contacts.userId":req.query.hisId} , {
@@ -134,45 +198,7 @@ module.exports = function(){
 				if(err){
 					res.status(500).send('delete not successful 1');
 				} else {
-					//clean my list of null values
-					Contacts.update({"_id":ObjectId(req.query.myCId)} ,{
-						"$pull":{
-							"contacts":null
-						}
-					} ,
-					function(err ,result){
-						if(err){
-							res.status(500).send('delete not successful 2');
-						}
-						else{
-							//Delete the contact in his list
-							Contacts.update({"_id":ObjectId(req.query.hisCId) , "contacts.userId":req.query.myId} , {
-								"$unset":{
-									"contacts.$":1
-								}
-							}, 
-							function(err , result){
-								if(err){
-									res.status(500).send('delete not successful 3');
-								} else {
-									//clean his list of null values
-									Contacts.update({"_id":ObjectId(req.query.hisCId)} ,{
-										"$pull":{
-											"contacts":null
-										}
-									} ,
-					               function(err , result){
-										 if(err){
-											 res.status(500).send('delete not successful 4');
-										 } else {
-											 res.status(200).send('Delete Ok');
-										 }
-									});
-									
-								}
-							});
-						}
-					})
+					doTaskB();
 				}
 			});
 		});
@@ -203,7 +229,9 @@ module.exports = function(){
 		Users.find({'$or':[
 		   {'username':text},
 		   {'email':text}
-		]} , {"vendorDetails":1 ,"profilePic":1 , "contactsId":1 , "fullName":1}).toArray(function(err, result){
+		]} , 
+		{"vendorDetails":1 ,"profilePic":1 , "contactsId":1 , "fullName":1}).toArray(
+		function(err, result){
 			if(err){
 				res.status(500).send('failed to get data');
 			}
