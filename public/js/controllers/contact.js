@@ -20,6 +20,7 @@ var app = angular.module('pouchlet');
 	   
 	   $scope.deleteContact = function(){
 		   var query ={
+			   "transHistoryId":$scope.contact.transHistoryId,
 			   "hisId": $scope.contact.userId,
 			   "hisCId":$scope.contact.contactsId,
 			   "myId": $scope.currentUser._id,

@@ -84,7 +84,7 @@ module.exports = function(){
 					if(err){
 						res.status(500).send('Not ok contact was not added 2');
 					} else {
-						res.status(200).send(contactSchema);
+						res.status(200).send('Contact added successfully');
 					}
 				});
 			}
@@ -138,38 +138,20 @@ module.exports = function(){
 		 *which means that for the data to be consistent we have to clean up the null values after we delete any thing
 		*/
 		.delete(function(req , res){
-			
-			function doTaskD(){
-				//clean his list of null values
-				Contacts.update({"_id":ObjectId(req.query.hisCId)} ,{
-					"$pull":{
-						"contacts":null
-					}
-				} ,
-			   function(err , result){
-					 if(err){
-						 res.status(500).send('delete not successful 4');
-					 } else {
-						 res.status(200).send('Delete Ok');
-					 }
-				});
-			};
-			
-			function doTaskC(){
-				//Delete the contact in his list
-				Contacts.update({"_id":ObjectId(req.query.hisCId) , "contacts.userId":req.query.myId} , {
-					"$unset":{
-						"contacts.$":1
-					}
-				}, 
-				function(err , result){
-					if(err){
-						res.status(500).send('delete not successful 3');
-					} else {
-						doTaskD();
-					}
-				});
-			};
+				
+			//delete the contact in my list
+			Contacts.update({"_id":ObjectId(req.query.myCId) , "contacts.userId":req.query.hisId} , {
+				"$unset":{
+					"contacts.$":1
+				}
+			} , 
+			function(err , result){
+				if(err){
+					res.status(500).send('delete not successful 1');
+				} else {
+					doTaskB();
+				}
+			});
 			
 			function doTaskB(){
 				//clean my list of null values
@@ -188,19 +170,50 @@ module.exports = function(){
 				})
 			};
 			
-			//delete the contact in my list
-			Contacts.update({"_id":ObjectId(req.query.myCId) , "contacts.userId":req.query.hisId} , {
-				"$unset":{
-					"contacts.$":1
-				}
-			} , 
-			function(err , result){
-				if(err){
-					res.status(500).send('delete not successful 1');
-				} else {
-					doTaskB();
-				}
-			});
+			function doTaskC(){
+				//Delete the contact in his list
+				Contacts.update({"_id":ObjectId(req.query.hisCId) , "contacts.userId":req.query.myId} , {
+					"$unset":{
+						"contacts.$":1
+					}
+				}, 
+				function(err , result){
+					if(err){
+						res.status(500).send('delete not successful 3');
+					} else {
+						doTaskD();
+					}
+				});
+			};
+			
+			function doTaskD(){
+				//clean his list of null values 
+				Contacts.update({"_id":ObjectId(req.query.hisCId)} ,{
+					"$pull":{
+						"contacts":null
+					}
+				} ,
+			   function(err , result){
+					 if(err){
+						 res.status(500).send('delete not successful 4');
+					 } else {
+						 doTaskE();
+					 }
+				});
+			};
+			
+			function doTaskE(){
+				//Delete the transaction history Id
+				Transactions.remove({"_id":ObjectId(req.query.transHistoryId)} ,
+				   function(err , result){
+						 if(err){
+							 res.status(500).send('delete not successful 5');
+						 } else {
+							 res.status(200).send('Delete Ok');
+						 }
+					});
+			};
+			
 		});
 		
     //This returns the contact list from the contact list collection that matches the id in the url params

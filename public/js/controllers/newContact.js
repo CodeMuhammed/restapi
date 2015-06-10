@@ -45,7 +45,10 @@ app.directive('newContact' , function(){
 			  "hisCId": $scope.contactsId
 		  };
 		  
-		  dataService.addContact(query);
+		  dataService.addContact(query).then(function(result){
+			  alert(result);
+			  authService.login();
+		  });
 	  }  
   });
    

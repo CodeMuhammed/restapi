@@ -232,6 +232,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  
 	  //METHOD ADD CONTACT
 	  var addContact = function(query){
+		  var promise = $q.defer();
 		  var contacts = contactsObj.contacts;
 		  
 		  var exists = false;
@@ -243,22 +244,25 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  }
 		  if(query.hisId===query.myId){
 			  alert('You cant add your self to your list');
+			  promise.reject();
 		  }
 		  else if(exists){
 			  alert('contact already in your list');
+			  promise.reject();
 		  } else {
 			  $http({
 				  method: 'POST',
 				  url: 'api/contact',
 				  data : query
 			  }).success(function(result){
-				   console.log(angular.toJson(result));
-				   contactsObj.contacts.push(result);
-				   viewService.setView('contacts');
+				   promise.resolve(result);
 			  }).error(function(err){
 				   alert(err);
+				   promise.reject();
 			  });
 		  }
+		  
+		  return promise.promise;
 	  };
 	  
 	  //METHOD DELETE CONTACT
