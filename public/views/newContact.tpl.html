@@ -10,20 +10,28 @@
 		   <div class="vendor-signin" ng-show="searchComplete">
 			  
 			  <img ng-src="{{vendorLogo}}" height="50">
-			  <button class="btn btn-default btn-xs pull-right" style="margin-top:.8em"> {{vendor.subscribers | countFilter}} subscribers </button>
+			  <button class="btn btn-default btn-xs pull-right" style="margin-top:1.2em"> {{vendor.subscribers | countFilter}} subscribers </button>
 			  <h4>{{fullName}}</h4>
 			  <hr />
-			  <h4>Description</h4>
+			  <label>Description</label>
 			  <p>
 				 {{vendor.description}}
 			  </p>
 			  <p>url :<a>{{vendor.url}}</a> </p> 
 			  <p>secret : {{vendor.secret}}</p>
 			  <br />
-			  <label>Please enter your pouchet username and password</label>
-			  <input type="text" class="form-control" placeholder="User Name" required>	
-			  <input type="password" class="form-control" placeholder="Password" required>
-			  <button class="btn btn-success btn-sm" ng-click="addContact()"><i class="icon fa fa-plus"> add contact </i></button>
+			  <label>Please enter your credentials bbelow</label>
+			  <span class="col-xs-12" style="padding:.5em" ng-repeat="token in vendor.userTokens">
+				  <div class="col-xs-3">{{token}} :</div>  
+				  <div class="col-xs-9" ><input class="form-control" style="border-radius:0px" ng-model="" ></div>
+			  </span>
+			  <hr />
+			  <span class="col-xs-12" style="padding:.5em">
+			     <div class="col-xs-9 col-xs-offset-3" >
+				    <button class="btn btn-success btn-sm " ng-click="addContact()"><i class="icon fa fa-plus"> Subscribe </i></button>
+				 </div>
+			     
+			  </span>
 		   </div>
 	   </div>
    </div>

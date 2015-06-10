@@ -36,16 +36,18 @@ module.exports = function(){
 		*3.Update their contacts collections appropriately
 	   */
 	   .post(function(req , res){
+		   
 		   var contactSchema = {
 				color : "red",
 				transHistoryId : '',
 				userId : '',
-				ring : "true",
-				alert : "true"
+				alert : 'true',
+				type : '',
+				credentials : {}
 			};
 			
 			var tranSchema = {
-				"transLog" : ["This is where transaction logs will be pushed"]
+				"transLog" : []
 			};
 			
 			var query = req.body;
@@ -56,18 +58,21 @@ module.exports = function(){
 				else {
 					contactSchema.transHistoryId = result.ops[0]._id.toString();
 					
-					//insert his contact into my contact list and vice-versa
-					contactSchema.userId = query.hisId;
-					Contacts.update({"_id":ObjectId(query.myCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
+					//insert my contact into his contact list and vice-versa then return the
+					//contact inserted into my contact list
+					contactSchema.userId = query.myId;
+					contactSchema.type = 'bill from';
+					Contacts.update({"_id":ObjectId(query.hisCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
 						if(err){
 							res.status(500).send('Not ok contact was not added 1');
 						} else {
-							contactSchema.userId = query.myId;
-							Contacts.update({"_id":ObjectId(query.hisCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
+							contactSchema.userId = query.hisId;
+							contactSchema.type = 'bill to';
+							Contacts.update({"_id":ObjectId(query.myCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
 								if(err){
 									res.status(500).send('Not ok contact was not added 2');
 								} else {
-									res.status(200).send('okk contact addded');
+									res.status(200).send(contactSchema);
 								}
 							});
 						}

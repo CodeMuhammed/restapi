@@ -13,27 +13,53 @@ var app = angular.module('pouchlet');
    
    app.controller('userProfileCtrl' , function($scope , dataService){
 	   $scope.user = dataService.getUser();
-	   $scope.temp = angular.copy($scope.user); //where user will be stored when editing
+	   //$scope.temp; //where user will be stored when editing
 	   
 	   $scope.edit = false;
 	   
 	   $scope.toggleEdit = function(){
 		   if($scope.edit){
-			   $scope.temp= $scope.user;
+			   $scope.temp= angular.copy($scope.user);
 		   }else {
-			   $scope.user = $scope.temp;
+			   $scope.edit = true;
+			   $scope.temp= angular.copy($scope.user);
 		   }
-		   $scope.edit=!$scope.edit;
 	   };
 	   
-	   $scope.save = function(user){
-		   dataService.updateUser(user).then(
+	   $scope.save = function(){
+		   if($scope.temp){
+			   dataService.updateUser($scope.temp).then(
 			   function(user){
-				   $scope.user = user;
-		           $scope.edit = false;
+				   $scope.user = angular.copy($scope.temp);
 			   } , function(err){
 				   
 			   });
+		   } 
+	   }
+	   
+	   $scope.cancel = function(){
+		   if($scope.temp){
+			   $scope.user = angular.copy($scope.temp);
+			   $scope.edit=false;
+		   }
+	   }
+	   
+	   $scope.addToken = function(token){
+		   if(token){
+			   if($scope.user.vendorDetails.userTokens.length>2){
+				   alert('maximum number of tokens exceeded');
+			   } else {
+				    alert(token);
+			        $scope.user.vendorDetails.userTokens.push(token);
+			   }
+			  $scope.isToken = undefined;
+		   }
+		   
+	   }
+	   
+	   $scope.deleteToken = function(token){
+		   var index = $scope.user.vendorDetails.userTokens.indexOf(token);
+		   $scope.user.vendorDetails.userTokens.splice(index , 1);
 	   }
 	   
 	   //listens for  when profile image is changed

@@ -20,16 +20,6 @@ var app = angular.module('pouchlet');
 			  
 		  } , 100);
 		  
-		   $timeout(function(){
-			  $scope.view = 'contact';
-			  
-		  } , 10);
-		  
-		  $timeout(function(){
-			  $scope.view = 'profile';
-			  
-		  } , 5);
-		  
 	   });
 	  
 	  //called by contact ctrl

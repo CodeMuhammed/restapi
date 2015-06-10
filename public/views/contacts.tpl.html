@@ -18,10 +18,7 @@
 					<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
 					<span class="caret"></span>
 				  </button>
-				  <button class="btn btn-default btn-xs"><i class="icon fa {{contact.ring ==='true' ? 'fa-bell' : 'fa-bell-o'}}" style="color:maroon"></i></button>
-				  <button class="btn btn-default btn-xs">
-				     <i class="icon fa fa-exclamation-circle" style="color: {{contact.alert ==='true' ? 'red' : 'black'}}"></i>
-				  </button>
+				  <button class="btn btn-default btn-xs"><i class="icon fa {{contact.alert ==='true' ? 'fa-bell' : 'fa-bell-o'}}" style="color:maroon"></i></button>
 				  <ul class="dropdown-menu" role="menu">
 					<li ng-repeat="color in colors" ng-click="changeColor(contact ,color)">
 					   <a href="#"><i class="icon fa fa-circle" style="color: {{color}}"></i> {{color}}</a>
@@ -33,6 +30,9 @@
 				  <img ng-src="{{contact.profilePic}}" width="40">
 				  <span style="margin-left:2em">
 				    {{contact.username}}
+				  </span>
+				  <span style="margin-left:2em">
+				    {{contact.type}}
 				  </span>
 			 </div>
 		   </div>

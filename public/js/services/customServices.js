@@ -3,10 +3,10 @@
 var app = angular.module('pouchlet');
 
 app.factory('mySocket' , function(socketFactory , $window){
-	  return socketFactory({
-		  ioSocket : $window.io.connect('http://localhost:3000')
-	  });
-  });
+   return socketFactory({
+	  ioSocket : $window.io.connect('http://localhost:3000')
+   });
+});
   
 app.service('authService' , function($http , $rootScope , $q ,$resource, dataService , viewService){
 	  //This handles signUp in the following ways
@@ -129,7 +129,8 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	      activeContact = {};
 		  transHistory = {};
 		  User = {};
-		  newUserSchema;
+		  newUserSchema =undefined;
+		  user_image=undefined;
 	  };
 	 
 	  //This function gets the schema the user will fill when doing a
@@ -153,10 +154,31 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return newUserSchemaPromise.promise;
 	  };
 	  
+	  //METHOD: SET USER
 	  var setUser = function(validUser){
 		  User = validUser;
 		  setContacts(User.contactsId);
 		  return  userPromise.promise;
+	  };
+	  
+	  //METHOD: UPDATE  USER
+	  var updateUser = function(user){
+		  var updateUserPromise = $q.defer();
+		  $http({
+			  method : 'PUT',
+			  url  : 'api/user',
+			  data : user
+		  })
+		  .success(function(result){
+			  alert(result);
+			  User = user;
+			  updateUserPromise.resolve(User);
+		  })
+		  .error(function(err){
+			  alert(err);
+			  updateUserPromise.reject(err);
+		  });
+		  return updateUserPromise.promise;
 	  };
 	  
 	  //This gets the user contacts list from the server and 
@@ -204,7 +226,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			   });
 		  }
 	  };
- 
+      //METHOD: SET ACTIVE USER
 	  var setActiveContact = function(contact){
 		  activeContact = contact;
 		  setTransHistory(contact.transHistoryId);
@@ -213,7 +235,6 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  
 	  //METHOD ADD CONTACT
 	  var addContact = function(query){
-		  var addContactPromise = $q.defer();
 		  var contacts = contactsObj.contacts;
 		  
 		  var exists = false;
@@ -234,14 +255,13 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 				  url: 'api/contact',
 				  data : query
 			  }).success(function(result){
-				   alert(result);
-				   addContactPromise.resolve(true);
+				   alert(angular.toJson('Contact added'));
+				   contactsObj.contacts.push(result);
+				   viewService.setView('contacts');
 			  }).error(function(err){
-				  addContactPromise.reject(err);
+				   alert(err);
 			  });
 		  }
-		  
-		  return addContactPromise.promise;
 	  };
 	  
 	  //METHOD DELETE CONTACT
@@ -276,6 +296,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return promise.promise;
 	  }
 	  
+	  //METHOD: UPDATE CONTACT
 	  var updateContact = function(query){
 		  var updateContactPromise = $q.defer();
 		  $http ({
@@ -293,6 +314,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return updateContactPromise.promise;
 	  };
 	  
+	  //METHOD: SET TRANSACTION HISTORY
 	  var setTransHistory = function(id){
 		  $http({
 			  method: 'GET',
@@ -307,6 +329,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  });
 	  };
 	  
+	  //GET METHODS DEFINITION
 	  
 	  var getContacts = function(){
 		  return contactsObj;
@@ -330,25 +353,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		 return user_image
 	  };
 	  
-	  var updateUser = function(user){
-		  var updateUserPromise = $q.defer();
-		  $http({
-			  method : 'PUT',
-			  url  : 'api/user',
-			  data : user
-		  })
-		  .success(function(result){
-			  alert(result);
-			  User = user;
-			  updateUserPromise.resolve(User);
-		  })
-		  .error(function(err){
-			  alert(err);
-			  updateUserPromise.reject(err);
-		  });
-		  return updateUserPromise.promise;
-	  };
-	  
+	  //SEARCH: FOR THINGS
 	  var search = function(text){
 		  var searchPromise = $q.defer();
 		  $http({
