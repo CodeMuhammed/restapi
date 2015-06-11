@@ -19,7 +19,6 @@
 		       THIS SHOWS BECAUSE YOUR USER LIST IS EMPTY. click the user plus to get started
 		   </div>
 		   <div style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact" ng-repeat="contact in contacts | filter:contactFilter |categorize:activeType| orderBy:'color'" > 
-			  
 			  <div class="btn-group pull-right" style="margin-top:0em;">  
 				  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 					<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
@@ -39,9 +38,6 @@
 				  <img ng-src="{{contact.profilePic}}" height="30">
 				  <span style="margin-left:2em">
 				    {{contact.username}}
-				  </span>
-				  <span style="margin-left:2em">
-				    {{contact.type}}
 				  </span>
 			 </div>
 		   </div>

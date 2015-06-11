@@ -36,14 +36,13 @@ module.exports = function(){
 		*3.Update their contacts collections appropriately
 	   */
 	   .post(function(req , res){
-		   
 		   var contactSchema = {
 				color : "red",
 				transHistoryId : '',
 				userId : '',
 				alert : 'true',
 				type : '',
-				credentials : {}
+				tokenObject : req.body.tokenObject
 			};
 			
 			var tranSchema = {

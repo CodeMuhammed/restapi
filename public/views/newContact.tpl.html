@@ -23,7 +23,9 @@
 			  <label>Please enter your credentials bbelow</label>
 			  <span class="col-xs-12" style="padding:.5em" ng-repeat="token in vendor.userTokens">
 				  <div class="col-xs-3">{{token}} :</div>  
-				  <div class="col-xs-9" ><input class="form-control" style="border-radius:0px" ng-model="" ></div>
+				  <div class="col-xs-9" >
+				     <input class="form-control" style="border-radius:0px" ng-model="tokenObject[token]" >
+				  </div>
 			  </span>
 			  <hr />
 			  <span class="col-xs-12" style="padding:.5em">
