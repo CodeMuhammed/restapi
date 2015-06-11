@@ -28,9 +28,10 @@ var app = angular.module('pouchlet');
 	   
 	   $scope.save = function(){
 		   if($scope.temp){
-			   dataService.updateUser($scope.temp).then(
+			   dataService.updateUser($scope.user).then(
 			   function(user){
-				   $scope.user = angular.copy($scope.temp);
+				   $scope.edit = false;
+				   $scope.temp= angular.copy($scope.user);
 			   } , function(err){
 				   
 			   });

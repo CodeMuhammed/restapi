@@ -64,3 +64,36 @@ body {
 	  margin-bottom:1em;
    }
 }
+
+.profile{
+    input {
+	   border:none !important;
+	   box-shadow : 0 0 0 #fff;
+	}
+}
+
+.menu-tabs{
+    text-align: center;
+	border :1px solid #ccc;
+	border-top: 5px solid #ccc;
+	border-bottom: none;
+	padding-top:1em;
+	padding-bottom:1em;
+	
+	&:hover {
+	   color : @brand-primary;
+	   border :1px solid @brand-primary;
+	   border-top: 5px solid lighten(@brand-primary , 10%);
+	   border-bottom: none;
+	}
+	
+	
+}
+
+.active-menu {
+    color : @brand-primary;
+	border :1px solid @brand-primary;
+	border-top: 5px solid @brand-primary;
+	margin-top: -3px;
+	border-bottom: none;
+}

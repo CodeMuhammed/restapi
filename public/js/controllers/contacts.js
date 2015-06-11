@@ -16,6 +16,7 @@ app.directive('contacts' , function(){
 	  $scope.contactsId = dataService.getContacts()._id;
 	  $scope.contacts=dataService.getContacts().contacts;
 	  $scope.user_img_array = dataService.getUserImg();
+	  $scope.activeType = 'bill to';
 	  
 	  //This next procedure patches the contacts with the user_img_array
 	  for(var i=0; i<$scope.contacts.length; i++){
@@ -69,6 +70,11 @@ app.directive('contacts' , function(){
 			 authService.refresh();
 		 });
 	  };
+	  
+	  //
+	  $scope.changeType = function(type){
+		  $scope.activeType = type;
+	  }
 	  
   });
   

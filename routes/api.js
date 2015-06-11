@@ -58,13 +58,13 @@ module.exports = function(){
 					res.status(500).send('Not ok contact was not added 0');
 				}
 				else {
-					addMineToHis(result);
+					contactSchema.transHistoryId = result.ops[0]._id.toString();
+					addMineToHis();
 				}
 			});
 			
 			//add my contact to his contact list
-			function addMineToHis(result) {
-				contactSchema.transHistoryId = result.ops[0]._id.toString();
+			function addMineToHis() {
 				contactSchema.userId = query.myId;
 				contactSchema.type = 'bill from';
 				Contacts.update({"_id":ObjectId(query.hisCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){

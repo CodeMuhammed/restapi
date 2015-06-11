@@ -409,3 +409,19 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  }
   });
   
+  app.filter('categorize' , function(){
+	  return function(data , type){
+		  if(angular.isArray(data) && angular.isString(type)){
+			  //alert('valid data set '+type);
+			  var temp = [];
+			  for(var i=0; i<data.length; i++){
+				  if(data[i].type===type){
+					  temp.push(data[i]);
+				  }
+			  }
+			  return temp;
+		  } else {
+			  return data;
+		  }
+	  }
+  });
