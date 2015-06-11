@@ -223,7 +223,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			   });
 		  }
 	  };
-      //METHOD: SET ACTIVE USER
+      //METHOD: SET ACTIVE CONTACT
 	  var setActiveContact = function(contact){
 		  activeContact = contact;
 		  setTransHistory(contact.transHistoryId);
@@ -234,11 +234,13 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  var addContact = function(query){
 		  var promise = $q.defer();
 		  var contacts = contactsObj.contacts;
+		  var contact = {};
 		  
 		  var exists = false;
 		  for(var i=0; i<contacts.length; i++){
 			  if(contacts[i].userId===query.hisId){
 				  exists = true;
+				  contact = contacts[i];
 				  break;
 			  }
 		  }
@@ -247,9 +249,14 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			  promise.reject();
 		  }
 		  else if(exists){
-			  alert('contact already in your list');
-			  promise.reject();
-		  } else {
+			  console.log(contact);
+			  var oldContact = angular.copy(contact);
+			  contact.type='both';
+			  updateContact(oldContact , contact).then(function(){
+				  promise.resolve('contact already in your list but updated to both');
+			  });
+		  } 
+		  else {
 			  $http({
 				  method: 'POST',
 				  url: 'api/contact',
@@ -298,7 +305,26 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  }
 	  
 	  //METHOD: UPDATE CONTACT
-	  var updateContact = function(query){
+	  var updateContact = function(oldContact , newContact){
+		  var updateContactPromise = $q.defer();
+		 //delete patches
+		  delete(oldContact.profilePic);
+		  delete(oldContact.username);
+		  delete(oldContact.contactsId);
+		  
+		  delete(newContact.profilePic);
+		  delete(newContact.username);
+		  delete(newContact.contactsId);
+	  
+		   //construct the query object to be sent to the server
+		  var query = {
+			  contactsId : contactsObj._id,
+			  newData : newContact,
+			  oldData : oldContact
+		  };
+		  
+		  console.log(query);
+			  
 		  var updateContactPromise = $q.defer();
 		  $http ({
 			  method : 'PUT',
@@ -415,7 +441,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			  //alert('valid data set '+type);
 			  var temp = [];
 			  for(var i=0; i<data.length; i++){
-				  if(data[i].type===type){
+				  if(data[i].type===type || data[i].type==='both'){
 					  temp.push(data[i]);
 				  }
 			  }
