@@ -12,7 +12,7 @@
 			 ngf-min-size="" ngf-max-size=""
 			 ngf-allow-dir="false" 
 			 ngf-drop-available="dropAvailable" >
-			    <img ng-src="img/default.png" width="110" class="img-rounded">
+			    <img ng-src="img/default.png" style="height:6em" class="img-rounded">
 		 </div>
 	 </div>
 	 
@@ -20,7 +20,7 @@
 		The file selected is not valid
 	 </ul>	
 	 <div class="preview" ng-show="files[0].type.indexOf('image') > -1" style="padding-top:.5em; text-align:center">
-		<img width="100%" ngf-src="files[0]" >	
+		<img style="height:6em" ngf-src="files[0]" >	
 	 </div>
 	
     <div style="margin-top:.2em; padding:.2em; border-radius:5px; background-color:#ccc" class="btn-group">

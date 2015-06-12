@@ -42,7 +42,8 @@ module.exports = function(){
 				userId : '',
 				alert : 'true',
 				type : '',
-				tokenObject : {}
+				tokenObject : {},
+				services : []
 			};
 			
 			var tranSchema = {
@@ -125,8 +126,12 @@ module.exports = function(){
 						   res.status(500).send('Not ok 1');
 					   } else {
 						   if(req.body.newData.type==='both'){
-							   updateHisType();
-						   }else {
+							   updateHisType('both');
+						   }
+						   else if(req.body.oldData.type==='both'){
+							   updateHisType('bill to');
+						   }
+						   else {
 							    res.status(200).send('contacts updated');
 						   }
 					   }
@@ -136,13 +141,13 @@ module.exports = function(){
 			
 			
 			//When the subscription type has been set to both ,the other guy also needs to be aware
-			function updateHisType(){
+			function updateHisType(type){
 				console.log('It was recorded now take action '+req.body.hisCId);
 				
 				Contacts.update(
 				   {"_id":ObjectId(req.body.hisCId) , "contacts.transHistoryId" : req.body.newData.transHistoryId} ,
 				   {"$set":{
-						"contacts.$.type": 'both'
+						"contacts.$.type": type
 				   }} , 
 				   function(err  , result){
 					   if(err){

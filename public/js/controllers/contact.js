@@ -12,11 +12,12 @@ var app = angular.module('pouchlet');
    });
    
    app.controller('contactCtrl' , function($scope ,  dataService){
-	   $scope.currentUser = dataService.getUser();
-	   
-	   $scope.contact = dataService.getActiveContact();
-	   $scope.transLog = dataService.getTransHistory();
-	   console.log($scope.contact);
+	   function refresh(){
+		   $scope.currentUser = dataService.getUser();
+		   $scope.contact = dataService.getActiveContact();
+		   $scope.transLog = dataService.getTransHistory();
+	   }
+	   refresh();
 	   
 	   $scope.deleteContact = function(){
 		   var query ={
@@ -27,7 +28,11 @@ var app = angular.module('pouchlet');
 			   "myCId": $scope.currentUser.contactsId
  		   };
 		   
-		   dataService.deleteContact(query);
+		   dataService.deleteContact(query).then(function(status){
+			   refresh();
+		   } , function(status){
+			    alert(status);
+		   });
 	   }
    });
    

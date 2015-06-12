@@ -279,31 +279,42 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  //METHOD DELETE CONTACT
 	  var deleteContact = function(query){
 		  var promise = $q.defer();
-		  //alert(angular.toJson(query));
-		  
-		  $http({
-			  method : 'DELETE',
-			  url : 'api/contact',
-			  params: query
-		  })
-		  .success(function(data){
-			  //after deleting from the server lets delete from the contacts list and change the view
-			  for (var i=0; i<contactsObj.contacts.length; i++){
-				  var temp = contactsObj.contacts[i];
-				  if(temp.userId===query.hisId){
-					  contactsObj.contacts.splice(i , 1);
-					  break;
+	     
+		 if(activeContact.type==='bill from'){
+			 promise.reject('You cannot delete a subscriber from your service');
+		 }
+		 else if(activeContact.type==='both') {
+			 var oldData = angular.copy(activeContact);
+			 activeContact.type = 'bill from';
+			 updateContact(oldData , activeContact).then(function(){
+				 promise.resolve(true);
+			 });
+		 }
+		 else {
+			 $http({
+				  method : 'DELETE',
+				  url : 'api/contact',
+				  params: query
+			  })
+			  .success(function(data){
+				  //after deleting from the server lets delete from the contacts list and change the view
+				  for (var i=0; i<contactsObj.contacts.length; i++){
+					  var temp = contactsObj.contacts[i];
+					  if(temp.userId===query.hisId){
+						  contactsObj.contacts.splice(i , 1);
+						  break;
+					  }
 				  }
-			  }
-			  
-			  alert(data);
-			  viewService.setView('contacts');
-			  
-			  
-		  })
-		  .error(function(err){
-			  alert(err);
-		  });
+				  
+				  alert(data);
+				  viewService.setView('contacts');
+				  
+				  
+			  })
+			  .error(function(err){
+				  alert(err);
+			  });
+		 }
 		  
 		  return promise.promise;
 	  }
