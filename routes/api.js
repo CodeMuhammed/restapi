@@ -42,7 +42,7 @@ module.exports = function(){
 				userId : '',
 				alert : 'true',
 				type : '',
-				tokenObject : req.body.tokenObject
+				tokenObject : {}
 			};
 			
 			var tranSchema = {
@@ -77,6 +77,7 @@ module.exports = function(){
 			
 			//add his contact to my contact list
 			function addHisToMine() {
+				contactSchema.tokenObject=req.body.tokenObject;
 				contactSchema.userId = query.hisId;
 				contactSchema.type = 'bill to';
 				Contacts.update({"_id":ObjectId(query.myCId)} , {"$addToSet":{"contacts":contactSchema}} ,function(err , result){
@@ -99,7 +100,7 @@ module.exports = function(){
 			//look for the contact in the contacts collection array that matches the contact to be updated
 			//and remove it from the list
 			Contacts.update(
-				{"_id":ObjectId(req.body.contactsId)} ,
+				{"_id":ObjectId(req.body.myCId)} ,
 				{"$pull":{
 					"contacts":req.body.oldData
 				}} , 
@@ -115,9 +116,33 @@ module.exports = function(){
 			//After the removal is done , add the update version back
 			function addNewContact(){
 				Contacts.update(
-				   {"_id":ObjectId(req.body.contactsId)} ,
+				   {"_id":ObjectId(req.body.myCId)} ,
 				   {"$addToSet":{
 						"contacts":req.body.newData
+				   }} , 
+				   function(err  , result){
+					   if(err){
+						   res.status(500).send('Not ok 1');
+					   } else {
+						   if(req.body.newData.type==='both'){
+							   updateHisType();
+						   }else {
+							    res.status(200).send('contacts updated');
+						   }
+					   }
+				   }
+				);
+			}
+			
+			
+			//When the subscription type has been set to both ,the other guy also needs to be aware
+			function updateHisType(){
+				console.log('It was recorded now take action '+req.body.hisCId);
+				
+				Contacts.update(
+				   {"_id":ObjectId(req.body.hisCId) , "contacts.transHistoryId" : req.body.newData.transHistoryId} ,
+				   {"$set":{
+						"contacts.$.type": 'both'
 				   }} , 
 				   function(err  , result){
 					   if(err){
@@ -127,10 +152,9 @@ module.exports = function(){
 					   }
 				   }
 				);
-			}
+		    }
 			
-		})
-		
+	    })
 		
 		/*The Delete route is pretty elaborate But it really is very simple and i will try to explain in detail what it is doing
 		 *First note that when doing $unset to delete an element from an array , it replaces the value at that position with a null

@@ -7,12 +7,13 @@ app.factory('mySocket' , function(socketFactory , $window){
 	  ioSocket : $window.io.connect('http://localhost:3000')
    });
 });
-  
+
+//This handles signUp in the following ways
+//1. Passes the  data to the server which creates its entry in the
+//   database and returns the  user data
+//2. The returned data is then passed into the login service to login user automatically 
 app.service('authService' , function($http , $rootScope , $q ,$resource, dataService , viewService){
-	  //This handles signUp in the following ways
-	  //1. Passes the  data to the server which creates its entry in the
-	  //   database and returns the  user data
-	  //2. The returned data is then passed into the login service to login user automatically
+	  
 	  var signup = function(signupDetails){
 		  var signupPromise = $q.defer();
 		  $http({
@@ -244,18 +245,22 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 				  break;
 			  }
 		  }
+		  
 		  if(query.hisId===query.myId){
 			  alert('You cant add your self to your list');
 			  promise.reject();
 		  }
-		  else if(exists){
-			  console.log(contact);
+		  else if(exists && contact.type==='bill from'){
 			  var oldContact = angular.copy(contact);
 			  contact.type='both';
+			  contact.tokenObject = query.tokenObject;
 			  updateContact(oldContact , contact).then(function(){
-				  promise.resolve('contact already in your list but updated to both');
+				  promise.resolve('contact already subscribed to your services : updated to both');
 			  });
 		  } 
+		  else if(exists && contact.type==='bill to'){
+			  promise.resolve('You are already subscribed for this service');
+		  }
 		  else {
 			  $http({
 				  method: 'POST',
@@ -268,7 +273,6 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 				   promise.reject();
 			  });
 		  }
-		  
 		  return promise.promise;
 	  };
 	  
@@ -307,6 +311,8 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  //METHOD: UPDATE CONTACT
 	  var updateContact = function(oldContact , newContact){
 		  var updateContactPromise = $q.defer();
+		  var hisCId = angular.copy(newContact.contactsId);
+		  
 		 //delete patches
 		  delete(oldContact.profilePic);
 		  delete(oldContact.username);
@@ -318,7 +324,8 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  
 		   //construct the query object to be sent to the server
 		  var query = {
-			  contactsId : contactsObj._id,
+			  myCId : contactsObj._id,
+			  hisCId: hisCId,
 			  newData : newContact,
 			  oldData : oldContact
 		  };
