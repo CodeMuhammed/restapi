@@ -23,6 +23,7 @@ module.exports = function(dbName , authObj){
 					openedColls.Users = db.collection('Users');
 					openedColls.Contacts = db.collection('Contacts');
 					openedColls.Transactions = db.collection('Transactions');
+					openedColls.Services = db.collection('Services');
 					DBOpened = true;
 					
 					/*db.collection('Tests').insert(
@@ -40,10 +41,6 @@ module.exports = function(dbName , authObj){
 		}
 		
 	};
-    
-	var isDBOpened = function(){
-		return DBOpened;
-	};
 	
     //This function returns the valid collection to the client module
 	var model = function(coll){
@@ -53,12 +50,16 @@ module.exports = function(dbName , authObj){
 		return openedColls[coll];
 	};
 	
+	//
+	var isDBOpened = function(){
+		return DBOpened;
+	}
+	
 	//Do stuff with  dbName and authObj
 	url = 'mongodb://127.0.0.1:27017/'+dbName.trim();
 	return {
 		initColls : initColls,
-		model : model,
-		isDBOpened : isDBOpened
+		model : model
 	};
 };
 

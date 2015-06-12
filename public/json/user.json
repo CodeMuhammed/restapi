@@ -17,6 +17,7 @@
 	   "secret":"secret token",
 	   "userTokens":[]
 	},
+	"services":[],
    "country":"Nigeria",
    "profilePic":"img/default.png",
    "email":"email",

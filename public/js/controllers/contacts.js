@@ -17,8 +17,11 @@ app.controller('contactsCtrl' , function($scope , dataService , authService){
   function refresh() {
 	 $scope.colors = [ 'gray', 'blue', 'green' , 'yellow' ,'red'];
 	 $scope.contacts=dataService.getContacts().contacts;
+	 $scope.user = dataService.getUser();
 	 $scope.user_img_array = dataService.getUserImg();//array
 	 $scope.activeType = 'bill to';
+	 $scope.editService = false;
+	 $scope.newService = {};
 	 
 	  
 	  //This next procedure patches the contacts with the user_img_array
@@ -66,6 +69,46 @@ app.controller('contactsCtrl' , function($scope , dataService , authService){
   //
   $scope.changeType = function(type){
 	  $scope.activeType = type;
+  }
+  
+  //toggle editing of service to true
+  $scope.toggleEdit = function(){
+	  $scope.editService = true;
+  }
+  //This  handles adding a new service  to the services collection
+  $scope.addService = function(newService){
+	  dataService.updateServices(newService , 'POST').then(
+		  function(result){
+			  alert(result);
+			  $scope.user.services.push(result);
+			  //refresh();
+		  } , function(err){
+			  alert(angular.toJson(err));
+	   });
+  }
+  
+  //This deletes the service from the server
+  $scope.deleteService = function(serviceId){
+	 
+	   dataService.updateServices({'serviceId': serviceId} , 'DELETE').then(
+		  function(result){
+			  alert(result);
+			  var index = $scope.user.services.indexOf(serviceId);
+			  $scope.user.services.splice(index , 1);
+			  //refresh();
+		  } , function(err){
+			  alert(angular.toJson(err));
+	   });
+  }
+  
+  //This updates the service prefernces
+  $scope.updateService = function(serviceId){
+	  alert(serviceId);
+  }
+  //This cancels editing of service
+  $scope.cancel = function(){
+	  alert('cancel called');
+	  $scope.editService = false;
   }
   
 });

@@ -115,6 +115,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  var activeContact = {};
 	  var transHistory = {};
 	  var User = {};
+	  var services = [];
 	  var newUserSchema;
 	  var user_image;
 	  
@@ -127,6 +128,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	      activeContact = {};
 		  transHistory = {};
 		  User = {};
+		  services = [];
 		  newUserSchema =undefined;
 		  user_image=undefined;
 	  };
@@ -164,7 +166,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  var updateUserPromise = $q.defer();
 		  $http({
 			  method : 'PUT',
-			  url  : 'api/user',
+			  url  : '/api/user',
 			  data : user
 		  })
 		  .success(function(result){
@@ -185,7 +187,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  var setContacts = function(id){
 		  $http({
 			  method: 'GET',
-			  url: 'api/contacts/'+id
+			  url: '/api/contacts/'+id
 		  })
 		  .success(function(data){
 			    var contactIds = [];
@@ -198,7 +200,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 				
 		  })
 		  .error(function(err){
-			  alert(err);
+			  alert('error in setContacts');
 		  });
 	  };
 	  
@@ -211,19 +213,44 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			   //get the user img data from the server
 			   $http({
 				   method : 'POST',
-				   url : 'api/user_image_array',
+				   url : '/api/user_image_array',
 				   data : idArray
 			   })
 			   .success(function(data){
 				   user_image = data;
-				   userPromise.resolve();
+				   setServices(User.services);
+				  
 			   })
 			   .error(function(err){
-				   alert(err);
-				   userPromise.reject();
+				   alert('error in setUserImg');
 			   });
 		  }
 	  };
+	  
+	  //We need to get the services definition from the server based on the user
+	  //services ids stored in the user object
+	  var setServices = function(services){
+		  var query = {
+			  _id : User._id,
+			  services : services
+		  };
+		  
+		  $http({
+			  method: 'POST',
+			  url : '/api/getServices',
+			  data : query
+		  })
+		  .success(function(result){
+			  alert(result);
+			  userPromise.resolve();
+		  })
+		  .error(function(err){
+			  alert(angular.toJson(err));
+			  userPromise.reject();
+		  });
+		  
+	  }
+	  
       //METHOD: SET ACTIVE CONTACT
 	  var setActiveContact = function(contact){
 		  activeContact = contact;
@@ -416,6 +443,42 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return searchPromise.promise;
 	  };
 	  
+	  //This contains the full CRUD implementation of the /services end point
+      var updateServices = function(data , method){
+		  var promise = $q.defer();
+		  
+		  //inject the id of the user into the query object
+		  data._id = User._id;
+		  if(method==="POST"){
+			  
+			  $http({
+				  method : method,
+				  url : '/api/services',
+				  data : data
+			  })
+			  .success(function(result){
+				  promise.resolve(result);
+			  })
+			  .error(function(err){
+				  promise.reject(err); 
+			  });
+		  }
+		 else if (method==='DELETE'){
+			   $http({
+				  method : method,
+				  url : '/api/services',
+				  params : data
+			  })
+			  .success(function(result){
+				  promise.resolve(result);
+			  })
+			  .error(function(err){
+				  promise.reject(err); 
+			  });
+		  }
+		  return promise.promise;
+	  }	  
+	  
 	  return {
 		  reset : reset,
 		  getContacts : getContacts,
@@ -430,6 +493,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  getUser : getUser,
 		  setUser : setUser,
 		  updateUser : updateUser,
+		  updateServices : updateServices,
 		  search : search
 	  };
 	  

@@ -11,6 +11,7 @@ var dbResource = require('../app_server/models/dbResource')('test' , {});
 var Contacts = dbResource.model('Contacts');
 var Transactions = dbResource.model('Transactions');
 var Users = dbResource.model('Users');
+var Services = dbResource.model('Services');
 
 //api routes
 module.exports = function(){
@@ -29,6 +30,8 @@ module.exports = function(){
 		return next();
 	});
 	
+	/*********************************************************************************
+	 *********************************************************************************/
 	router.route('/contact')
 	   /*To add contact we will need to do the following
 		*1.create the transaction document in the transactions collection
@@ -243,6 +246,75 @@ module.exports = function(){
 			};
 			
 		});
+		
+    /*********************************************************************************
+	 *********************************************************************************/
+	 router.post('/getServices' , function(req , res){
+		 console.log(req.body);
+		 res.status(200).send('get services gotten');
+	 });
+	 router.route('/services')
+	    .post(function(req , res){
+			console.log('post request recieved on the  server');
+			var serviceSchema = {details : req.body};
+			
+			 Services.insertOne(serviceSchema , function(err, result){
+				 
+				 if(err){
+					res.status(500).send(err); 
+				 } else {
+					 
+					 addServiceIdToUser(result.ops[0]._id);
+				 }
+			 });
+			 
+			//after the service has been added in the services collection  ,the id is then stores
+			//in the services array for the particular user
+			 function addServiceIdToUser(serviceId){
+				 Users.update(
+				    {'_id':ObjectId(req.body._id)} ,
+			   	    {"$addToSet":{"services":serviceId}},
+					 function(err , result){
+						 if(err){
+							 res.status(500).send(err); 
+						 }
+						 else {
+							 res.status(200).send(serviceId);
+						 }
+					 });
+			 }
+		 })
+		 
+		 .delete(function(req , res){
+			 console.log(req.query);
+			 Services.remove({"_id": ObjectId(req.query.serviceId)} , function(err , result){
+				  if(err){
+					  res.status(500).send(err); 
+				  } else {
+					  removeServiceIdFromUser(req.query.serviceId);
+				  }
+			 });
+			 
+			 
+			 //this removes the reference of the service id from the user
+			 function removeServiceIdFromUser(serviceId){
+				 console.log(serviceId);
+				 Users.update({"_id":ObjectId(req.query._id)} , {
+					 "$pull":{"services":ObjectId(serviceId)}
+				 } , function(err , result){
+					  if(err){
+						  res.status(500).send(err); 
+					  } else {
+						 res.status(200).send('delete ok ');
+					  }
+				 });
+			 }
+			 
+		 })
+	 
+	 
+    /*********************************************************************************
+	 *********************************************************************************/
 		
     //This returns the contact list from the contact list collection that matches the id in the url params
 	router.route('/contacts/:id')

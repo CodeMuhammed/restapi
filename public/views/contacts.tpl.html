@@ -18,10 +18,12 @@
                <input type="text" class="form-control" style="border-radius: 0px !important;" placeholder="Filter users" ng-model="contactFilter">
 		   </div>
 		   
-		   <div class="alert alert-warning" ng-show="contacts.length===0">
+		   <div class="alert alert-warning" ng-show="contacts.length===0 && activeType !== 'services'">
 		       THIS SHOWS BECAUSE YOUR USER LIST IS EMPTY. click the user plus to get started
 		   </div>
-		   <div style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact" ng-repeat="contact in contacts | filter:contactFilter |categorize:activeType| orderBy:'color'" > 
+		   <div style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact" 
+		          ng-repeat="contact in contacts | filter:contactFilter |categorize:activeType| orderBy:'color'" 
+				  ng-hide="activeType==='services'"> 
 			  <div class="btn-group pull-right" style="margin-top:0em;">  
 				  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 					<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
@@ -44,7 +46,50 @@
 				  </span>
 			 </div>
 		   </div>
-
+		   
+		   <div style="padding:.7em;" ng-show="activeType==='services'">
+			  <div  ng-show="!editService">
+			      <div ng-repeat="service in user.services" style="padding-top:1em; padding-bottom:1em">
+				     {{service}}
+					 <div class="btn-group pull-right">
+					    <button class="btn btn-default btn-xs " ng-click="updateService(service)">
+						    <i class="icon fa fa-edit "> update</i>
+						 </button>
+					    <button class="btn btn-warning btn-xs " ng-click="deleteService(service)">
+						   <i class="icon fa fa-times "> delete</i>
+						 </button>
+						 
+					 </div>
+					 
+				  </div>
+			      
+				  <div class="pager">
+				      <button class="btn btn-default" ng-click="toggleEdit()">Add a new service 
+						 <i class="icon fa fa-plus"></i>
+					  </button>
+				  </div>
+			     
+			  </div>
+			  <div ng-hide="!editService">
+			      <h3>Please fill the fields below</h3>
+				  <form class="form-signin" novalidate  style = "box-shadow: 0em 0em .2em #ccc" ng-model="newService">
+					  <input class="form-control" placeholder="service name" style="margin-bottom:1em;" ng-model="newService.name">
+					  <textarea class="form-control" placeholder="service Description" style="height:8em; margin-bottom:1em;" ng-model="newService.description"></textarea>
+					  <input class="form-control" placeholder="Ammount per month" ng-model="newService.amount" >
+					  <div class="checkbox">
+						  <label>
+							<input type="checkbox" value="remember-me" ng-model="newService.paymentMode"> Check if you want billboy to handle payments for you <a>learn more</a>
+						  </label>
+					  </div>
+					  
+					  <div class="" style="padding-top:1em;">
+						 <button class="btn btn-default  btn-sm" ng-click="cancel()">Cancel Edit</button>
+						 <button class="btn btn-success  btn-sm" style="margin-left:1em" ng-click="addService(newService)">Add service</button>
+					  </div>
+				  </form>
+			  </div>
+		 
+		   </div>
 		</div>
 		
 		<div style="padding-left:0; padding-right:0;padding-top:.5em" >

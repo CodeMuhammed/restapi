@@ -14,6 +14,7 @@ var dbResource = require('../../app_server/models/dbResource')('test' , {});
 //models
 var Users = dbResource.model('Users');
 var Contacts = dbResource.model('Contacts');
+var Services = dbResource.model('Services');
 
 module.exports = function(passport){
 	//Get collections or models needed for this routes
@@ -95,31 +96,34 @@ module.exports = function(passport){
 			if(result[0]){
 				return done(null , false);
 			} else {
-				createContact();
+				createContactList();
 			}
 			
 		});
 		
-		//get Default contact schema from file
 	    //create a contact list for this user
-		function createContact() {
-			
+		function createContactList() {
 			Contacts.insertOne({"contacts" : []} , function(err , result){
 				if(err){
 					return done(err);
 				}
 				newUser.contactsId = result.ops[0]._id;
 				newUser.password = createHash(password);
+				createUser()
 				
-				//add to Users collections
-				Users.insertOne(newUser  ,  function(err , result){
-					if(err){
-						return done(err);
-					}
+			});
+		}
+		
+		//Add the user in the users collections
+		function createUser() {
+			Users.insertOne(newUser , function(err,result){
+				if(err){
+					return done(err);
+				} else {
 					return done(null , {
 						_id : result.ops[0]._id
 					});
-				});
+				}
 			});
 		}
 		
