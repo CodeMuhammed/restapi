@@ -115,7 +115,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  var activeContact = {};
 	  var transHistory = {};
 	  var User = {};
-	  var services = [];
+	  var Services = [];
 	  var newUserSchema;
 	  var user_image;
 	  
@@ -241,7 +241,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			  data : query
 		  })
 		  .success(function(result){
-			  alert(result);
+			  Services = result;
 			  userPromise.resolve();
 		  })
 		  .error(function(err){
@@ -425,6 +425,10 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		 return user_image
 	  };
 	  
+	  var getServices = function(){
+		  return Services;
+	  }
+	  
 	  //SEARCH: FOR THINGS
 	  var search = function(text){
 		  var searchPromise = $q.defer();
@@ -447,29 +451,57 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
       var updateServices = function(data , method){
 		  var promise = $q.defer();
 		  
-		  //inject the id of the user into the query object
-		  data._id = User._id;
 		  if(method==="POST"){
-			  
+			//inject the id of the user into the query object
+		     data.userId = User._id;
+			 
 			  $http({
 				  method : method,
 				  url : '/api/services',
 				  data : data
 			  })
 			  .success(function(result){
+				  Services.push(result);
 				  promise.resolve(result);
 			  })
 			  .error(function(err){
 				  promise.reject(err); 
 			  });
 		  }
+		  
+		 else if(method==='PUT'){
+			$http({
+				  method : method,
+				  url : '/api/services',
+				  data : data
+			  })
+			  .success(function(result){
+				  //find and replace old data in Services object
+				  for(var i=0; i<Services.length; i++){
+					  if(Services[i]._id===data._id){
+						  Services[i].details = data.details;
+					  }
+				  }
+				  
+				  promise.resolve(result);
+			  })
+			  .error(function(err){
+				  promise.reject(err); 
+			  });
+		 }
+		 
 		 else if (method==='DELETE'){
+			 var query = {};
+			  query.serviceId = data._id;
+			  query.userId = data.details._id;
 			   $http({
 				  method : method,
 				  url : '/api/services',
-				  params : data
+				  params : query
 			  })
 			  .success(function(result){
+				  var index = Services.indexOf(data);
+				  Services.splice(index , 1);
 				  promise.resolve(result);
 			  })
 			  .error(function(err){
@@ -492,6 +524,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  getNewUserSchema : getNewUserSchema,
 		  getUser : getUser,
 		  setUser : setUser,
+		  getServices : getServices, 
 		  updateUser : updateUser,
 		  updateServices : updateServices,
 		  search : search

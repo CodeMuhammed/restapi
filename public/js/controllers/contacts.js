@@ -21,7 +21,11 @@ app.controller('contactsCtrl' , function($scope , dataService , authService){
 	 $scope.user_img_array = dataService.getUserImg();//array
 	 $scope.activeType = 'bill to';
 	 $scope.editService = false;
+	 $scope.exists = false;
 	 $scope.newService = {};
+	 $scope.temp = {};
+	 
+	 $scope.services = dataService.getServices();
 	 
 	  
 	  //This next procedure patches the contacts with the user_img_array
@@ -72,28 +76,29 @@ app.controller('contactsCtrl' , function($scope , dataService , authService){
   }
   
   //toggle editing of service to true
-  $scope.toggleEdit = function(){
+  $scope.toggleEdit = function(status){
 	  $scope.editService = true;
+	  $scope.exists = status;
   }
   //This  handles adding a new service  to the services collection
   $scope.addService = function(newService){
 	  dataService.updateServices(newService , 'POST').then(
 		  function(result){
-			  alert(result);
-			  $scope.user.services.push(result);
+			  $scope.user.services.push(result._id);
 			  //refresh();
+			  $scope.cancel();
 		  } , function(err){
 			  alert(angular.toJson(err));
 	   });
   }
   
   //This deletes the service from the server
-  $scope.deleteService = function(serviceId){
+  $scope.deleteService = function(service){
 	 
-	   dataService.updateServices({'serviceId': serviceId} , 'DELETE').then(
+	   dataService.updateServices(service , 'DELETE').then(
 		  function(result){
 			  alert(result);
-			  var index = $scope.user.services.indexOf(serviceId);
+			  var index = $scope.user.services.indexOf(service._id);
 			  $scope.user.services.splice(index , 1);
 			  //refresh();
 		  } , function(err){
@@ -101,13 +106,24 @@ app.controller('contactsCtrl' , function($scope , dataService , authService){
 	   });
   }
   
+  $scope.toggleUpdate = function(service){
+	  $scope.toggleEdit(true);
+	  $scope.temp = angular.copy(service); 
+	  $scope.newService = $scope.temp.details;
+  }
   //This updates the service prefernces
-  $scope.updateService = function(serviceId){
-	  alert(serviceId);
+  $scope.updateService = function(serviceDetails){
+	   $scope.temp.details = serviceDetails;
+	  if($scope.exists){
+		  dataService.updateServices($scope.temp , 'PUT' ,  $scope.old).then(function(result){
+			  alert(result);
+			  refresh();
+		  });
+	  }
+	  
   }
   //This cancels editing of service
   $scope.cancel = function(){
-	  alert('cancel called');
 	  $scope.editService = false;
   }
   

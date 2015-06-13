@@ -23,53 +23,66 @@
 		   </div>
 		   <div style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact" 
 		          ng-repeat="contact in contacts | filter:contactFilter |categorize:activeType| orderBy:'color'" 
-				  ng-hide="activeType==='services'"> 
-			  <div class="btn-group pull-right" style="margin-top:0em;">  
-				  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-					<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
-					<span class="caret"></span>
-				  </button>
-				  <button class="btn btn-default btn-sm">
-				     <i class="icon fa {{contact.alert ==='true' ? 'fa-bell' : 'fa-bell-o'}}" style="color:maroon">
-				  </i></button>
-				  <ul class="dropdown-menu" role="menu">
-					<li ng-repeat="color in colors" ng-click="changeColor(contact ,color)">
-					   <a href="#"><i class="icon fa fa-circle" style="color: {{color}}"></i> {{color}}</a>
-					</li>
-				  </ul>
-				 
-			  </div>
+				  ng-hide="activeType==='services'">
+				  
 			  <div style="padding:.0em; padding-right:1em;" class="" ng-click = "displayTransFor(contact)">
 				  <img ng-src="{{contact.profilePic}}" height="30">
 				  <span style="margin-left:2em">
-				    {{contact.username}}
+					{{contact.username}}
 				  </span>
-			 </div>
+				  <div class="btn-group pull-right" >  
+					  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<i class="icon fa fa-circle" style="color: {{contact.color}}"></i>
+						<span class="caret"></span>
+					  </button>
+					  <button class="btn btn-default btn-sm">
+						 <i class="icon fa {{contact.alert ==='true' ? 'fa-bell' : 'fa-bell-o'}}" style="color:maroon">
+					  </i></button>
+					  <ul class="dropdown-menu" role="menu">
+						<li ng-repeat="color in colors" ng-click="changeColor(contact ,color)">
+						   <a href="#"><i class="icon fa fa-circle" style="color: {{color}}"></i> {{color}}</a>
+						</li>
+					  </ul>
+				  </div>
+			  </div>
+			  
 		   </div>
 		   
-		   <div style="padding:.7em;" ng-show="activeType==='services'">
-			  <div  ng-show="!editService">
-			      <div ng-repeat="service in user.services" style="padding-top:1em; padding-bottom:1em">
-				     {{service}}
-					 <div class="btn-group pull-right">
-					    <button class="btn btn-default btn-xs " ng-click="updateService(service)">
-						    <i class="icon fa fa-edit "> update</i>
+		   <div style="padding:.7em;  padding-left:0; padding-right:0; " ng-show="activeType==='services'">
+			 
+			  <div ng-repeat="service in services" ng-show="!editService" 
+			        style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact">
+				  <div style="padding:0em; padding-right:1em;">
+					  <img ng-src="img/circle.png" height="30">
+					  <span style="margin-left:2em ; font-weight:bold;">
+						{{service.details.name}}
+					  </span>
+					  <span style="margin-left:1em">
+						{{service.details.description}}
+					  </span>
+					  
+					  <div class="btn-group pull-right" style="margin-top:0em;">
+						<button class="btn btn-default btn-xs " ng-click="toggleUpdate(service)">
+							<i class="icon fa fa-edit "> update</i>
 						 </button>
-					    <button class="btn btn-warning btn-xs " ng-click="deleteService(service)">
+						<button class="btn btn-warning btn-xs " ng-click="deleteService(service)">
 						   <i class="icon fa fa-times "> delete</i>
-						 </button>
+						</button>
 						 
 					 </div>
-					 
-				  </div>
-			      
-				  <div class="pager">
-				      <button class="btn btn-default" ng-click="toggleEdit()">Add a new service 
-						 <i class="icon fa fa-plus"></i>
-					  </button>
-				  </div>
-			     
+					 <button class="btn btn-default btn-xs  pull-right">
+						 {{service.details.amount | currency}}
+				     </button>
+				 </div>
+				 
 			  </div>
+			    
+			  <div class="pager">
+				  <button class="btn btn-default" ng-click="toggleEdit(false)">Add a new service 
+					 <i class="icon fa fa-plus"></i>
+				  </button>
+			  </div>
+			     
 			  <div ng-hide="!editService">
 			      <h3>Please fill the fields below</h3>
 				  <form class="form-signin" novalidate  style = "box-shadow: 0em 0em .2em #ccc" ng-model="newService">
@@ -84,7 +97,13 @@
 					  
 					  <div class="" style="padding-top:1em;">
 						 <button class="btn btn-default  btn-sm" ng-click="cancel()">Cancel Edit</button>
-						 <button class="btn btn-success  btn-sm" style="margin-left:1em" ng-click="addService(newService)">Add service</button>
+						 <button class="btn btn-success  btn-sm" style="margin-left:1em"
+  						     ng-click="addService(newService)"
+							 ng-hide="exists">Add service</button>
+							 
+						 <button class="btn btn-success  btn-sm" style="margin-left:1em"
+  						     ng-click="updateService(newService)"
+							 ng-show="exists">Update service</button>
 					  </div>
 				  </form>
 			  </div>

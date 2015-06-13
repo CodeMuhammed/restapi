@@ -250,9 +250,25 @@ module.exports = function(){
     /*********************************************************************************
 	 *********************************************************************************/
 	 router.post('/getServices' , function(req , res){
-		 console.log(req.body);
-		 res.status(200).send('get services gotten');
+		 
+		  console.log(req.body);
+		 //convert the ids in the array to object ids
+		 for(var i=0; i<req.body.services.length; i++){
+			 req.body.services[i] = ObjectId(req.body.services[i]);
+		 }
+		
+		 //@TODO get services from Services collection
+		  Services.find(
+		   {"_id": {"$in":req.body.services}}
+		  ).toArray(function(err , result){
+				if(err){
+					res.status(500).send('Cannot complete operation getServices');
+				} else {
+					res.status(200).send(result);
+				}
+		  });
 	 });
+	 
 	 router.route('/services')
 	    .post(function(req , res){
 			console.log('post request recieved on the  server');
@@ -263,30 +279,29 @@ module.exports = function(){
 				 if(err){
 					res.status(500).send(err); 
 				 } else {
-					 
-					 addServiceIdToUser(result.ops[0]._id);
+					 addServiceIdToUser(result.ops[0]);
 				 }
 			 });
 			 
 			//after the service has been added in the services collection  ,the id is then stores
 			//in the services array for the particular user
-			 function addServiceIdToUser(serviceId){
+			 function addServiceIdToUser(service){
 				 Users.update(
-				    {'_id':ObjectId(req.body._id)} ,
-			   	    {"$addToSet":{"services":serviceId}},
+				    {'_id':ObjectId(req.body.userId)} ,
+			   	    {"$addToSet":{"services":service._id}},
 					 function(err , result){
 						 if(err){
 							 res.status(500).send(err); 
 						 }
 						 else {
-							 res.status(200).send(serviceId);
+							 res.status(200).send(service);
 						 }
 					 });
 			 }
 		 })
 		 
 		 .delete(function(req , res){
-			 console.log(req.query);
+			 
 			 Services.remove({"_id": ObjectId(req.query.serviceId)} , function(err , result){
 				  if(err){
 					  res.status(500).send(err); 
@@ -298,10 +313,11 @@ module.exports = function(){
 			 
 			 //this removes the reference of the service id from the user
 			 function removeServiceIdFromUser(serviceId){
-				 console.log(serviceId);
-				 Users.update({"_id":ObjectId(req.query._id)} , {
+				 console.log(serviceId+' service');
+				 Users.update({"_id":ObjectId(req.query.userId)} , {
 					 "$pull":{"services":ObjectId(serviceId)}
-				 } , function(err , result){
+				 } , 
+				 function(err , result){
 					  if(err){
 						  res.status(500).send(err); 
 					  } else {
@@ -312,6 +328,21 @@ module.exports = function(){
 			 
 		 })
 	 
+	    .put(function(req , res){
+			console.log(req.body._id);
+			Services.update(
+			      {"_id":ObjectId(req.body._id)} , 
+				  {"$set":{"details":req.body.details}} , 
+				function(err , result){
+					if(err){
+						res.status(500).send(err);
+					}
+				   else{
+						res.status(200).send('PUT completed successfuully');
+				   } 
+				});
+			
+		 });
 	 
     /*********************************************************************************
 	 *********************************************************************************/
