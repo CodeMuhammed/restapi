@@ -51,9 +51,11 @@
 		   <div style="padding:.7em;  padding-left:0; padding-right:0; " ng-show="activeType==='services'">
 			 
 			  <div ng-repeat="service in services" ng-show="!editService" 
-			        style="padding:.7em; background:{{$even ? '#ccc' : '#fff'}}" class="contact">
+			       ng-mouseenter="showElipsis=true" ng-mouseleave="showElipsis=false" 
+				   style="padding:.7em;" class="contact">
 				  <div style="padding:0em; padding-right:.4em;">
-					  <img ng-src="img/circle.png" height="30">
+				      <i class="icon fa fa-ellipsis-v" ng-show="showElipsis"></i>
+					  <img ng-src="img/circle.png" height="20" style="margin-left:{{showElipsis? '.0em' : '.55em'}}">
 					  <span style="margin-left:2em ; font-weight:bold;">
 						{{service.details.name}}
 					  </span>

@@ -2,9 +2,9 @@
    <div class="panel">
 	   <div class="panel-body">
 		   <div class="input-group" style="padding-bottom:.4em;">
-			  <input type="text" class="form-control" style="border-radius: 0px !important;" placeholder="Search for contact by email or username" ng-model="searchText">
-			  <span class="input-group-addon" ng-click="search(searchText)">
-				<i class="icon fa fa-search" style="font-size:1.3em;"></i>
+			  <input type="text" class="form-control" style="border-radius: 0px !important; height:3em" placeholder="Search for contact by email or username" ng-model="searchText">
+			  <span class="input-group-addon" style="background-color:#428bca" ng-click="search(searchText)">
+				<i class="icon fa fa-search" style="font-size:1.5em; font-weight:bold; color:#fff"></i>
 			  </span>
 		   </div>
 		   <div class="vendor-signin" ng-show="searchComplete">
@@ -20,7 +20,7 @@
 			  <p>secret : {{vendor.secret}}</p>
 			  <hr />
 			  <p><h4>services </h4> {{services}}</p>
-			  <br />
+			   <hr />
 			  <label>Please enter your credentials below</label>
 			  <span class="col-xs-12" style="padding:.5em" ng-repeat="token in vendor.userTokens">
 				  <div class="col-xs-3">{{token}} :</div>  
