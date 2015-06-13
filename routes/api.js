@@ -300,6 +300,22 @@ module.exports = function(){
 			 }
 		 })
 		 
+		 .put(function(req , res){
+			console.log(req.body._id);
+			Services.update(
+			      {"_id":ObjectId(req.body._id)} , 
+				  {"$set":{"details":req.body.details}} , 
+				function(err , result){
+					if(err){
+						res.status(500).send(err);
+					}
+				   else{
+						res.status(200).send('PUT completed successfuully');
+				   } 
+				});
+			
+		 })
+		 
 		 .delete(function(req , res){
 			 
 			 Services.remove({"_id": ObjectId(req.query.serviceId)} , function(err , result){
@@ -309,7 +325,6 @@ module.exports = function(){
 					  removeServiceIdFromUser(req.query.serviceId);
 				  }
 			 });
-			 
 			 
 			 //this removes the reference of the service id from the user
 			 function removeServiceIdFromUser(serviceId){
@@ -326,22 +341,6 @@ module.exports = function(){
 				 });
 			 }
 			 
-		 })
-	 
-	    .put(function(req , res){
-			console.log(req.body._id);
-			Services.update(
-			      {"_id":ObjectId(req.body._id)} , 
-				  {"$set":{"details":req.body.details}} , 
-				function(err , result){
-					if(err){
-						res.status(500).send(err);
-					}
-				   else{
-						res.status(200).send('PUT completed successfuully');
-				   } 
-				});
-			
 		 });
 	 
     /*********************************************************************************
@@ -374,7 +373,7 @@ module.exports = function(){
 		   {'username':text},
 		   {'email':text}
 		]} , 
-		{"vendorDetails":1 ,"profilePic":1 , "contactsId":1 , "fullName":1}).toArray(
+		{"vendorDetails":1 ,"profilePic":1 , "contactsId":1 , "fullName":1 , "services":1}).toArray(
 		function(err, result){
 			if(err){
 				res.status(500).send('failed to get data');

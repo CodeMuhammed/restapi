@@ -12,15 +12,16 @@
 			  <img ng-src="{{vendorLogo}}" height="50">
 			  <button class="btn btn-default btn-xs pull-right" style="margin-top:1.2em"> {{vendor.subscribers | countFilter}} subscribers </button>
 			  <h4>{{fullName}}</h4>
-			  <hr />
-			  <label>Description</label>
+			   <label>Description</label>
 			  <p>
 				 {{vendor.description}}
 			  </p>
 			  <p>url :<a>{{vendor.url}}</a> </p> 
 			  <p>secret : {{vendor.secret}}</p>
+			  <hr />
+			  <p><h4>services </h4> {{services}}</p>
 			  <br />
-			  <label>Please enter your credentials bbelow</label>
+			  <label>Please enter your credentials below</label>
 			  <span class="col-xs-12" style="padding:.5em" ng-repeat="token in vendor.userTokens">
 				  <div class="col-xs-3">{{token}} :</div>  
 				  <div class="col-xs-9" >

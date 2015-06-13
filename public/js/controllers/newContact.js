@@ -30,8 +30,10 @@ app.controller('newContactCtrl' , function($scope ,$rootScope, dataService , aut
 	  $scope.searching  = true;
 	  dataService.search(searchText).then(
 		 function(data){
+			 console.log(data);
 			  $scope.vendor = data.vendorDetails;
 			  $scope.vendorLogo = data.profilePic;
+			  $scope.services =  data.services;
 			  $scope.userId = data._id;
 			  $scope.contactsId = data.contactsId;
 			  $scope.fullName = data.fullName;

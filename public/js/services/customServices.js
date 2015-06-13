@@ -493,7 +493,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		 else if (method==='DELETE'){
 			 var query = {};
 			  query.serviceId = data._id;
-			  query.userId = data.details._id;
+			  query.userId = User._id;
 			   $http({
 				  method : method,
 				  url : '/api/services',
