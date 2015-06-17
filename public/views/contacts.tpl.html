@@ -1,4 +1,4 @@
-   <div>
+   <div style="margin-top:1em;">
 		<div style="padding-left:0; padding-right:0;">
 		
 		   <div class="col-xs-4 menu-tabs" ng-click="changeType('bill to')" ng-class="activeType==='bill to' ? 'active-menu' : ''">
@@ -48,18 +48,21 @@
 			  
 		   </div>
 		   
-		   <div style="padding:.7em;  padding-left:0; padding-right:0; " ng-show="activeType==='services'">
+		   <!--SERVICES-->
+		   <div style="padding:0;" ng-show="activeType==='services'">
 			 
 			  <div ng-repeat="service in services" ng-show="!editService" 
 			       ng-mouseenter="showElipsis=true" ng-mouseleave="showElipsis=false" 
-				   style="padding:.7em;" class="contact">
-				  <div style="padding:0em; padding-right:.4em;">
-				      <i class="icon fa fa-ellipsis-v" ng-show="showElipsis"></i>
-					  <img ng-src="img/circle.png" height="20" style="margin-left:{{showElipsis? '.0em' : '.55em'}}">
-					  <span style="margin-left:2em ; font-weight:bold;">
-						{{service.details.name}}
+				   style="padding:1.5em 0em">
+				  <div style="padding:0em; padding-right:0em;">
+				      <span class="col-xs-3 col-md-2" style="white-space:nowrap; overflow:hidden; padding-left:0">
+						  <i class="icon fa fa-ellipsis-v" ng-show="showElipsis"></i>
+						  <img ng-src="img/circle.png" height="20" style="margin-left:{{showElipsis? '.0em' : '.0em'}}">
+						  <span style="font-weight:bold;">
+							{{service.details.name}}
+						  </span>
 					  </span>
-					  <span style="margin-left:1em" class='hidden-xs'>
+					  <span style="margin-left:1em; white-space:nowrap; overflow:hidden" class=" col-xs-4 col-md-8">
 						{{service.details.description}}
 					  </span>
 					  
@@ -79,7 +82,7 @@
 				 
 			  </div>
 			    
-			  <div class="pager">
+			  <div class="pager col-xs-12 " ng-hide="editService">
 				  <button class="btn btn-default" ng-click="toggleEdit(false)">Add a new service 
 					 <i class="icon fa fa-plus"></i>
 				  </button>
@@ -117,7 +120,7 @@
 		   <withdraw></withdraw>
 		</div>
 		
-		<div style="text-align:center; margin-top:2em" class="sticky-footer ">
+		<div style="text-align:center; margin-top:2em" class="sticky-footer col-xs-12 ">
 			<h5>&copy; 2015 billpouch inc.</h5>
 		</div>
 	</div>

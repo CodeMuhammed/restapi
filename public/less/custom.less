@@ -7,9 +7,10 @@
 @import "print.less";
 
 //Import components
+@import "modals.less";
 @import "button-groups.less";
 @import "buttons.less";
-@import "modals.less";
+
 
 body {
    background-color:#fff !important;
@@ -75,15 +76,12 @@ body {
 .menu-tabs{
     text-align: center;
 	border :1px solid #ccc;
-	border-top: 5px solid #ccc;
 	border-bottom: none;
 	padding-top:1em;
 	padding-bottom:1em;
 	
 	&:hover {
 	   color : @brand-primary;
-	   border :1px solid @brand-primary;
-	   border-top: 5px solid lighten(@brand-primary , 10%);
 	   border-bottom: none;
 	}
 	
@@ -92,8 +90,68 @@ body {
 
 .active-menu {
     color : @brand-primary;
-	border :1px solid @brand-primary;
 	border-top: 5px solid @brand-primary;
 	margin-top: -3px;
 	border-bottom: none;
+}
+ 
+.home-display {
+   min-height: 50em;
+   background-color: hsla(0 , 0 , 0 ,1);
+   background: url('../img/test.png') center center no-repeat;
+   padding:4em 0em;
+   .motto {
+      color: #fff;
+	  padding : 3em;
+	  text-align:center;
+	  font-weight:bold;
+	  font-size: 2em;
+	  
+   }
+}
+
+.form-signin {
+  position: relative;
+  padding: 1.2em;
+  margin: 0 auto;
+  //border: 4px solid @brand-success;
+  .icons-layer {
+     position: absolute;
+	 bottom:0;
+	 right:50%;
+	 color:#fff;
+  }
+  h3 {
+     color: #fff;
+	 text-align:center;
+  }
+ .form-control {
+	  position: relative;
+	  height: 3em;
+	  -webkit-box-sizing: border-box;
+		 -moz-box-sizing: border-box;
+			  box-sizing: border-box;
+	  padding: 10px;
+	  font-size: 1.2em;
+  }
+  input{
+     margin-bottom: 1em;
+	 border-radius: 0px;
+  }
+  select{
+     margin-bottom: 1em;
+	 border-radius: 0px;
+  }
+}
+
+.nav-menu {
+  
+   margin-top:.6em;
+   .btn {
+      font-weight:bold;
+	  font-size:1.3em;
+      color:@brand-primary;
+      text-decoration:none;
+	  outline:none;
+   }
 }

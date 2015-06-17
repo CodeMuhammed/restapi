@@ -260,32 +260,24 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  
 	  //METHOD ADD CONTACT
 	  var addContact = function(query){
+		  
 		  var promise = $q.defer();
 		  var contacts = contactsObj.contacts;
-		  var contact = {};
-		  
 		  var exists = false;
+		  
 		  for(var i=0; i<contacts.length; i++){
-			  if(contacts[i].userId===query.hisId){
+			  if(contacts[i].userId===query.hisId  && contacts[i].type==='bill to'){
 				  exists = true;
-				  contact = contacts[i];
 				  break;
 			  }
 		  }
 		  
 		  if(query.hisId===query.myId){
-			  alert('You cant add your self to your list');
+			  alert('You can\'t add your self to your list');
 			  promise.reject();
 		  }
-		  else if(exists && contact.type==='bill from'){
-			  var oldContact = angular.copy(contact);
-			  contact.type='both';
-			  contact.tokenObject = query.tokenObject;
-			  updateContact(oldContact , contact).then(function(){
-				  promise.resolve('contact already subscribed to your services : updated to both');
-			  });
-		  } 
-		  else if(exists && contact.type==='bill to'){
+		  
+		  else if(exists){
 			  promise.resolve('You are already subscribed for this service');
 		  }
 		  else {
@@ -310,13 +302,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		 if(activeContact.type==='bill from'){
 			 promise.reject('You cannot delete a subscriber from your service');
 		 }
-		 else if(activeContact.type==='both') {
-			 var oldData = angular.copy(activeContact);
-			 activeContact.type = 'bill from';
-			 updateContact(oldData , activeContact).then(function(){
-				 promise.resolve(true);
-			 });
-		 }
+	
 		 else {
 			 $http({
 				  method : 'DELETE',
@@ -333,7 +319,6 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 					  }
 				  }
 				  
-				  alert(data);
 				  viewService.setView('contacts');
 				  
 				  
@@ -344,46 +329,6 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		 }
 		  
 		  return promise.promise;
-	  }
-	  
-	  //METHOD: UPDATE CONTACT
-	  var updateContact = function(oldContact , newContact){
-		  var updateContactPromise = $q.defer();
-		  var hisCId = angular.copy(newContact.contactsId);
-		  
-		 //delete patches
-		  delete(oldContact.profilePic);
-		  delete(oldContact.username);
-		  delete(oldContact.contactsId);
-		  
-		  delete(newContact.profilePic);
-		  delete(newContact.username);
-		  delete(newContact.contactsId);
-	  
-		   //construct the query object to be sent to the server
-		  var query = {
-			  myCId : contactsObj._id,
-			  hisCId: hisCId,
-			  newData : newContact,
-			  oldData : oldContact
-		  };
-		  
-		  console.log(query);
-			  
-		  var updateContactPromise = $q.defer();
-		  $http ({
-			  method : 'PUT',
-			  url : 'api/contact',
-			  data : query
-		  })
-		  .success(function(result){
-			  console.log(result);
-			  updateContactPromise.resolve(true);
-		  })
-		  .error(function(err){
-			  updateContactPromise.reject(err);
-		  });
-		  return updateContactPromise.promise;
 	  };
 	  
 	  //METHOD: SET TRANSACTION HISTORY
@@ -517,7 +462,6 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  setActiveContact : setActiveContact,
 		  getActiveContact : getActiveContact,
 		  addContact : addContact,
-		  updateContact : updateContact,
 		  deleteContact : deleteContact,
 		  getUserImg : getUserImg,
 		  getTransHistory :  getTransHistory ,

@@ -1,7 +1,7 @@
 <!-- Static navbar -->
-<nav class="navbar navbar-default" style="border-top:2px solid #ccc; padding-left:0;padding-right:0;">
+<nav class="navbar navbar-default" style="border-top:2px solid #ccc; padding-left:0;padding-right:0; margin-bottom:0; border-bottom:5px solid #000; border-radius:0px">
    <div class="navbar-header col-md-12" style="padding-left:0;padding-right:0;">
-	  <a class="navbar-brand " style="padding-top:.15em"><img src="img/billboy.png" height="40"></a>
+	  <a class="navbar-brand " style="padding-top:.15em"><img src="img/squarepeg.png" height="40"></a>
    
 	  <div class="btn-group pull-right " style="margin-right:em" ng-show="view!=='homepage'">
 	  
@@ -28,10 +28,10 @@
 		  </div>  
 	  </div>
 	  
-	  <div class="btn-group pull-right" style="margin-top:.6em" ng-show="view==='homepage'">
-	     <button class="btn btn-link" style="text-decoration:none" ng-click="homepageAction('signin')">Sign in</button>
-	     <button class="btn btn-link" style="text-decoration:none" ng-click="homepageAction('register')">Register</button>
-		 <button class="btn btn-link" style="text-decoration:none" ng-click="homepageAction('blog')">Blog</button>
+	  <div class="btn-group pull-right nav-menu"  ng-show="view==='homepage'">
+	     <button class="btn btn-link"  ng-click="homepageAction('signin')">Sign in</button>
+	     <button class="btn btn-link"  ng-click="homepageAction('register')">Register</button>
+		 <button class="btn btn-link"  ng-click="homepageAction('blog')">Blog</button>
 	  </div>
 	</div>
 </nav>
