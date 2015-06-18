@@ -8,19 +8,48 @@
 			  </span>
 		   </div>
 		   <div class="vendor-signin" ng-show="searchComplete">
-			  
+			  <h4>{{fullName}}</h4>
 			  <img ng-src="{{vendorLogo}}" height="50">
 			  <button class="btn btn-default btn-xs pull-right" style="margin-top:1.2em"> {{vendor.subscribers | countFilter}} subscribers </button>
-			  <h4>{{fullName}}</h4>
-			   <label>Description</label>
-			  <p>
-				 {{vendor.description}}
-			  </p>
+			  
 			  <p>url :<a>{{vendor.url}}</a> </p> 
 			  <p>secret : {{vendor.secret}}</p>
 			  <hr />
-			  <p><h4>services </h4> {{services}}</p>
-			   <hr />
+			  <div style="padding:0">
+			      <h4 style="font-weight:bold; color:#428bca">Services Offered</h4>
+				  <div ng-repeat="service in services" ng-show="!editService" 
+					   ng-mouseenter="showElipsis=true" ng-mouseleave="showElipsis=false" 
+					   style="padding:1.5em 0em">
+					  <div style="padding:0em; padding-right:0em;">
+						  <span class="col-xs-3 col-md-2" style="white-space:nowrap; overflow:hidden; padding-left:0">
+							  <i class="icon fa fa-ellipsis-v" ng-show="showElipsis"></i>
+							  <img ng-src="img/circle.png" height="20" style="margin-left:{{showElipsis? '.0em' : '.0em'}}">
+							  <span style="font-weight:bold;">
+								{{service.details.name}}
+							  </span>
+						  </span>
+						  <span style="margin-left:1em; white-space:nowrap; overflow:hidden" class=" col-xs-4 col-md-8">
+							{{service.details.description}}
+						  </span>
+						  
+						  <div class="btn-group pull-right" style="margin-top:0em;">
+							 <button class="btn btn-default btn-xs">
+								 {{service.details.amount | currency}}
+							 </button>
+							 <button class="btn btn-default btn-xs" ng-click="mark(service)" ng-hide="isMarked(service)">
+								<i class="icon fa fa-plus" > mark </i>
+							 </button>
+							 <button class="btn btn-success btn-xs" ng-click="unmark(service)" ng-show="isMarked(service)">
+								<i class="icon fa fa-check" > marked</i>
+							 </button>
+						 </div>
+						 
+					 </div>
+					 
+				  </div>
+			  </div>
+			   
+			  <hr />
 			  <label>Please enter your credentials below</label>
 			  <span class="col-xs-12" style="padding:.5em" ng-repeat="token in vendor.userTokens">
 				  <div class="col-xs-3">{{token}} :</div>  
@@ -31,7 +60,7 @@
 			  <hr />
 			  <span class="col-xs-12" style="padding:.5em">
 			     <div class="col-xs-9 col-xs-offset-3" >
-				    <button class="btn btn-success btn-sm " ng-click="addContact()"><i class="icon fa fa-plus"> Subscribe </i></button>
+				    <button class="btn btn-success btn-sm " ng-click="subscribe()"><i class="icon fa fa-plus"> Subscribe </i></button>
 				 </div>
 			  </span>
 		   </div>

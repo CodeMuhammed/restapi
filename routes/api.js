@@ -95,6 +95,67 @@ module.exports = function(){
 			
 		})
 		
+		/*To update a contact , we will need to do the following 
+		 *1.Remove the old contact from the contact list that matches the id
+		 *2.If this is successful ,  we replace it with the new contact definition*/
+        
+		.put(function(req , res){
+			console.log(req.body);
+			//look for the contact in the contacts collection array that matches the contact to be updated
+			//and remove it from the list
+			Contacts.update(
+				{"_id":ObjectId(req.body.myCId)} ,
+				{"$pull":{
+					"contacts":req.body.oldData
+				}} , 
+				function(err , result){
+					if(err){
+						res.status(500).send('Not ok 1');
+					} else {
+						addNewContact();
+					}
+				}
+			);
+			
+			//After the removal is done , add the update version back
+			function addNewContact(){
+				Contacts.update(
+				   {"_id":ObjectId(req.body.myCId)} ,
+				   {"$addToSet":{
+						"contacts":req.body.newData
+				   }} , 
+				   function(err  , result){
+					   if(err){
+						   res.status(500).send('Not ok 1');
+					   } else {
+						   res.status(200).send('contacts updated');
+					   }
+				   }
+				);
+			}
+			
+			
+			//When the subscription type has been set to both ,the other guy also needs to be aware
+			function updateHisType(type){
+				console.log('It was recorded now take action '+req.body.hisCId);
+				
+				Contacts.update(
+				   {"_id":ObjectId(req.body.hisCId) , "contacts.transHistoryId" : req.body.newData.transHistoryId} ,
+				   {"$set":{
+						"contacts.$.type": type
+				   }} , 
+				   function(err  , result){
+					   if(err){
+						   res.status(500).send('Not ok 1');
+					   } else {
+						   res.status(200).send('contacts updated');
+					   }
+				   }
+				);
+		    }
+			
+	    })
+			
 		/*The Delete route is pretty elaborate But it really is very simple and i will try to explain in detail what it is doing
 		 *First note that when doing $unset to delete an element from an array , it replaces the value at that position with a null
 		 *which means that for the data to be consistent we have to clean up the null values after we delete any thing
@@ -184,13 +245,13 @@ module.exports = function(){
 		 
 		  console.log(req.body);
 		 //convert the ids in the array to object ids
-		 for(var i=0; i<req.body.services.length; i++){
-			 req.body.services[i] = ObjectId(req.body.services[i]);
+		 for(var i=0; i<req.body.length; i++){
+			 req.body[i] = ObjectId(req.body[i]);
 		 }
 		
 		 //@TODO get services from Services collection
 		  Services.find(
-		   {"_id": {"$in":req.body.services}}
+		   {"_id": {"$in":req.body}}
 		  ).toArray(function(err , result){
 				if(err){
 					res.status(500).send('Cannot complete operation getServices');

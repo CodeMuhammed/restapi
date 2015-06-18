@@ -5,7 +5,13 @@
    
 	  <div class="btn-group pull-right " style="margin-right:em" ng-show="view!=='homepage'">
 	  
-		 <div class="btn-group" style="margin-top:.6em">
+		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" ng-click="changeView('contacts')">
+			 <i class="icon fa fa-home"></i>
+		  </div>
+		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" ng-click="changeView('newContact')">
+			 <i class="icon fa fa-search"></i>
+		  </div>  
+		  <div class="btn-group" style="margin-top:.6em">
 			  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 				<i class="icon fa fa-user"></i>
 				<span class="caret"></span>
@@ -18,14 +24,6 @@
 				  <li><a href="#"  ng-click = "logout()">Log-out</a></li>
 			  </ul>
 		 </div>
-		 
-
-		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" ng-click="changeView('contacts')">
-			 <i class="icon fa fa-users"></i>
-		  </div>
-		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" ng-click="changeView('newContact')">
-			 <i class="icon fa fa-user-plus"></i>
-		  </div>  
 	  </div>
 	  
 	  <div class="btn-group pull-right nav-menu"  ng-show="view==='homepage'">

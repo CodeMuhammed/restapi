@@ -230,26 +230,34 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 	  //We need to get the services definition from the server based on the user
 	  //services ids stored in the user object
 	  var setServices = function(services){
-		  var query = {
-			  _id : User._id,
-			  services : services
-		  };
-		  
+		  expandServices(services).then(
+		     function(result){
+				 Services = result;
+			     userPromise.resolve();
+			 },
+			 function(err){
+				 alert(angular.toJson(err));
+			     userPromise.reject();
+			 });
+	  }
+	  
+	  //This functions takes an array of services ids and returns an array of documents from the server
+	  var expandServices = function(serviceArr){
+		  var promise = $q.defer();
 		  $http({
 			  method: 'POST',
 			  url : '/api/getServices',
-			  data : query
+			  data : serviceArr
 		  })
 		  .success(function(result){
-			  Services = result;
-			  userPromise.resolve();
+			  promise.resolve(result);
 		  })
 		  .error(function(err){
 			  alert(angular.toJson(err));
-			  userPromise.reject();
+			  promise.reject();
 		  });
-		  
-	  }
+		  return promise.promise;
+	  };
 	  
       //METHOD: SET ACTIVE CONTACT
 	  var setActiveContact = function(contact){
@@ -264,10 +272,12 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  var promise = $q.defer();
 		  var contacts = contactsObj.contacts;
 		  var exists = false;
+		  var contact = {};
 		  
 		  for(var i=0; i<contacts.length; i++){
 			  if(contacts[i].userId===query.hisId  && contacts[i].type==='bill to'){
 				  exists = true;
+				  contact = contacts[i];
 				  break;
 			  }
 		  }
@@ -277,8 +287,45 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			  promise.reject();
 		  }
 		  
-		  else if(exists){
-			  promise.resolve('You are already subscribed for this service');
+		  else if(exists){ 
+			 var oldC  = angular.copy(contact);
+			  
+			 //checks if the service already exists in the contact
+			 var exist =  function(id){
+				  if(contact.services.length===0){
+					  return false;
+				  }
+				  for(var i=0; i<contact.services.length; i++){
+					  if(contact.services[i].serviceId === id){
+						  return true;
+					  }
+				  }
+				  return false;
+			  };
+			  
+			  var services = query.services;
+			  contact.tokenObject = query.tokenObject;
+			  
+			  //Add services that are not already existing in the contacts list of services
+			  for(var i=0; i<services.length; i++){
+				  if(! exist(services[i])){
+					  var o = {
+						  serviceId :  services[i]
+					  };
+					  contact.services.push(o);
+				  }
+			  }
+			  
+			  //update preferences to the server
+			  updateContact(oldC , contact).then(
+				  function(result){
+					  //update the services subscribed to and the token object
+			          promise.resolve('You are already subscribed for this service updated preferences');
+				  },
+				  function(){
+					  alert('error while doing merge update');
+				  });
+			  
 		  }
 		  else {
 			  $http({
@@ -295,6 +342,46 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  return promise.promise;
 	  };
 	  
+	   //METHOD: UPDATE CONTACT
+	  var updateContact = function(oldContact , newContact){
+		  var updateContactPromise = $q.defer();
+		  var hisCId = angular.copy(newContact.contactsId);
+		  
+		 //delete patches
+		  delete(oldContact.profilePic);
+		  delete(oldContact.username);
+		  delete(oldContact.contactsId);
+		  
+		  delete(newContact.profilePic);
+		  delete(newContact.username);
+		  delete(newContact.contactsId);
+	  
+		   //construct the query object to be sent to the server
+		  var query = {
+			  myCId : contactsObj._id,
+			  hisCId: hisCId,
+			  newData : newContact,
+			  oldData : oldContact
+		  };
+		  
+		  console.log(query);
+			  
+		  var updateContactPromise = $q.defer();
+		  $http ({
+			  method : 'PUT',
+			  url : 'api/contact',
+			  data : query
+		  })
+		  .success(function(result){
+			  console.log(result);
+			  updateContactPromise.resolve(true);
+		  })
+		  .error(function(err){
+			  updateContactPromise.reject(err);
+		  });
+		  return updateContactPromise.promise;
+     }
+	  	  
 	  //METHOD DELETE CONTACT
 	  var deleteContact = function(query){
 		  var promise = $q.defer();
@@ -454,14 +541,16 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 			  });
 		  }
 		  return promise.promise;
-	  }	  
+	  };
 	  
+	 
 	  return {
 		  reset : reset,
 		  getContacts : getContacts,
 		  setActiveContact : setActiveContact,
 		  getActiveContact : getActiveContact,
 		  addContact : addContact,
+		  updateContact: updateContact,
 		  deleteContact : deleteContact,
 		  getUserImg : getUserImg,
 		  getTransHistory :  getTransHistory ,
@@ -469,6 +558,7 @@ app.service('authService' , function($http , $rootScope , $q ,$resource, dataSer
 		  getUser : getUser,
 		  setUser : setUser,
 		  getServices : getServices, 
+		  expandServices : expandServices,
 		  updateUser : updateUser,
 		  updateServices : updateServices,
 		  search : search

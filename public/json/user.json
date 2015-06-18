@@ -12,7 +12,6 @@
    },
    "vendorDetails": {
 	   "subscribers":"0",
-	   "description":"descibe your business. ",
 	   "url":"http://yourauthlink.com",
 	   "secret":"secret token",
 	   "userTokens":[]
