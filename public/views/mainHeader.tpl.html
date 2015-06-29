@@ -1,7 +1,8 @@
 <!-- Static navbar -->
 <nav class="navbar navbar-default" style="border-top:2px solid #ccc; padding-left:0;padding-right:0; margin-bottom:0; border-bottom:5px solid #000; border-radius:0px">
    <div class="navbar-header col-md-12" style="padding-left:0;padding-right:0;">
-	  <a class="navbar-brand " style="padding-top:.15em"><img src="img/squarepeg.png" height="40"></a>
+	  <a class="navbar-brand hidden-xs" style="padding-top:.15em"><img src="img/purslr.png" height="40"></a>
+	  <a class="navbar-brand visible-xs" style="padding-top:.15em"><img src="img/purslr_s.png" height="40"></a>
    
 	  <div class="btn-group pull-right " style="margin-right:em" ng-show="view!=='homepage'">
 	  
@@ -11,11 +12,10 @@
 		  <div class="btn-lg col-xs-4" style="margin-top:.1em;" ng-click="changeView('newContact')">
 			 <i class="icon fa fa-search"></i>
 		  </div>  
-		  <div class="btn-group" style="margin-top:.6em">
-			  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+		  <div class="btn-lg col-xs-4" style="margin-top:.1em">
+			  <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 				<i class="icon fa fa-user"></i>
-				<span class="caret"></span>
-			  </button>
+			  </a>
 			  <ul class="dropdown-menu" role="menu">
 				  <li><a href="#" ng-click = "changeView('profile')">Profile</a></li>
 				  <li class="divider"></li>
