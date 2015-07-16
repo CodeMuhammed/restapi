@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Description 
 BillBoy is a mobile application / online service that manages all your subscriptions for you.
 If it is a service that you can pay for with  a credit card , billboy will help you to keep
@@ -13,3 +14,7 @@ Conveniently track all your subscriptions without endless alarms and reminders t
 you no longer have to worry about implementing a comprehensive list of subscribers on your main app, billboy handles that for you
 simple and easy to use billboy apis
 directed ads channel (know your customers and sell to them the right way)
+=======
+# restapi
+A rest api for all apps
+>>>>>>> adee150487878517e493f00efc880df054ec1621
