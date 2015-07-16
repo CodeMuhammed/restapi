@@ -56,7 +56,8 @@ module.exports = function(dbName , authObj){
 	}
 	
 	//Do stuff with  dbName and authObj
-	url = 'mongodb://127.0.0.1:27017/'+dbName.trim();
+	//url = 'mongodb://127.0.0.1:27017/'+dbName.trim();
+	url = 'mongodb://'+ authObj.dbuser+ ':'+authObj.dbpassword+'@ds051738.mongolab.com:51738/'+dbName.trim();
 	return {
 		initColls : initColls,
 		model : model

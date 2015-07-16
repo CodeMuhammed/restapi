@@ -9,14 +9,12 @@ var fs = require('fs');
 var path = require('path');
 var ObjectId = require('mongodb').ObjectId;
 
-//Grab models from the dbResource that are relevant to passport
-var dbResource = require('../../app_server/models/dbResource')('test' , {});
-//models
-var Users = dbResource.model('Users');
-var Contacts = dbResource.model('Contacts');
-var Services = dbResource.model('Services');
+module.exports = function(passport  , dbResource){
+	//models
+	var Users = dbResource.model('Users');
+	var Contacts = dbResource.model('Contacts');
+	var Services = dbResource.model('Services');
 
-module.exports = function(passport){
 	//Get collections or models needed for this routes
 	//var food = dbResource.model('food');
 	
@@ -30,20 +28,26 @@ module.exports = function(passport){
 	//Tells passport how to get users full info
 	passport.serializeUser(function(user , done){
 		console.log('user serialized '+user._id);
-		return done(null , user._id);
+		return done(null , user._id); 
 	});
 
 	passport.deserializeUser(function(_id , done){
 		//query database or cache for actual data
 		console.log('user deserialized ' + _id);
 		Users.find({'_id' : ObjectId(_id)}).toArray(function(err , result){
+            
 			if(err){
+				
 				return done(err ,false);
 			}
-			if(!result[0]){
+			else if(!result[0]){
+				
 				return done(null ,false);
 			}
-		    return done(null , result[0]);
+			else {
+			    return done(null , result[0]);
+			}
+		   
 		});
 	});
 	

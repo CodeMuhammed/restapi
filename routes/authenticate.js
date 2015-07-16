@@ -1,31 +1,45 @@
 var express = require('express');
 var router = express.Router();
 module.exports = function(passport){
-  
-   router.get('/reason' , function(req , res){
-	   console.log('reason called');
-	   if(req.isAuthenticated()){
-		   res.status(200).send(req.user);
-	   } else {
-		   res.status(401).send('invalid username or password');
-	   }
+
+	//A catch all logic for this route
+   router.use(function(req , res , next){
+   	  if(req.path === '/logout'){
+         next();
+   	  }
+   	 else if(req.isAuthenticated()){
+		 res.status(200).send(req.user);
+	 }
+     
+     else{
+         next();
+   	  }	 
    });
-   
-   router.post('/signup' ,  passport.authenticate('signup' , {
-		successRedirect : '/auth/reason',
-		failureRedirect : '/auth/reason'
-    }));
 
-	router.post('/login' ,  passport.authenticate('login' , {
-		successRedirect : '/auth/reason',
-		failureRedirect : '/auth/reason'
-	}));
-	
 
+   var status = function(req , res , next){
+       if(req.isAuthenticated()){
+		   res.status(200).send(req.user);
+	     } 
+	   else {
+		   res.status(401).send('invalid username or password');
+	     }
+   };
+
+  
+   router.post('/signup' , passport.authenticate('signup') , function(req , res){
+        status(req , res);
+   });
+
+   router.post('/login' , passport.authenticate('login') , function(req , res){
+        status(req , res);
+   });
+  
 	router.get('/logout' , function(req, res){
+		console.log('logout called');
 		req.logout();
 		res.status(200).send('Logged out successfully');
 	});
-	
-	return router;
+
+	return router; 
 };

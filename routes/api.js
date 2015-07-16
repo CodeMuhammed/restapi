@@ -4,17 +4,14 @@ var fs = require('fs');
 var path = require('path');
 var ObjectId = require('mongodb').ObjectId;
 
-//Grab models from the dbResource that are relevant this api
-var dbResource = require('../app_server/models/dbResource')('test' , {});
-
-//models
-var Contacts = dbResource.model('Contacts');
-var Transactions = dbResource.model('Transactions');
-var Users = dbResource.model('Users');
-var Services = dbResource.model('Services');
-
 //api routes
-module.exports = function(){
+module.exports = function(dbResource){
+    //models
+	var Contacts = dbResource.model('Contacts');
+	var Transactions = dbResource.model('Transactions');
+	var Users = dbResource.model('Users');
+	var Services = dbResource.model('Services');
+
 	router.use(function(req , res , next){
 	   if(req.isAuthenticated()){
 		  console.log('This User is authenticated'); 
@@ -243,7 +240,7 @@ module.exports = function(){
 	 *********************************************************************************/
 	 router.post('/getServices' , function(req , res){
 		 
-		  console.log(req.body);
+		  console.log('getServices called');
 		 //convert the ids in the array to object ids
 		 for(var i=0; i<req.body.length; i++){
 			 req.body[i] = ObjectId(req.body[i]);

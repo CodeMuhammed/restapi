@@ -10,6 +10,7 @@ var methodOverride = require('method-override');
 var favicon = require('serve-favicon');
 var busboy = require('connect-busboy');
 var passport  = require('passport');
+var cors  = require('cors');
 
 var socket = require('socket.io');
 var http  = require ('http');
@@ -22,22 +23,23 @@ var app = express();
 
 //set the model source @TODO use app.set(app.use) here ., Then return a function
 //that returns the object
-var dbResource = require('./app_server/models/dbResource')('test' , {});
+var dbResource = require('./app_server/models/dbResource')('restapi' , {dbuser:'codemuhammed' , dbpassword:'purslr'});
 //initialize database
 dbResource.initColls(function(){
 	//initialize passport
 	var initPassport = require('./app_server/controllers/passportCtrl');
-	initPassport(passport);
+	initPassport(passport , dbResource);
 
 	//Configure the express app
 	app.set('busboy' , busboy);
 	app.set('port' , process.env.PORT || 3000);
 
-
+    //cors 
+	app.use(cors({credentials: true, origin: true}));
+	
 	app.use(compression({threshold:1}));
 	//app.use(logger('combined'));
 	app.use(methodOverride('_method'));
-	app.use(favicon(path.join(__dirname , 'public', 'favicon.ico')));
 
 	//configure router to use cookie-parser  ,body-parser 
 	app.use(bodyParser.json());
@@ -45,18 +47,15 @@ dbResource.initColls(function(){
 	app.use(cookieParser());
 	app.use(session({resave:true , secret:'this string' , saveUninitialized:true}));
 
-	//serve static assets
-	app.use(express.static(path.join(__dirname , 'public')));
-
 	//use passport local strategy for login , logout and signup 
 	app.use(passport.initialize());
 	app.use(passport.session());
-
+	
 	//Define routes for authentication
 	app.use('/auth' , require('./routes/authenticate')(passport));
 
 	//api routes starts here
-	app.use('/api' , require('./routes/api')());
+	app.use('/api' , require('./routes/api')(dbResource));
 
 	//Define routes and middle wares in a separate module
 	require('./routes')(app);
