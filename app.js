@@ -52,8 +52,9 @@ dbResource.initColls(function(){
 	app.use(passport.session());
 	
 	app.get('/' , function(req , res){
-		res.json('restapi deployed');
+		res.json('restapi deployed :-) just awesome');
 	});
+	
 	//Define routes for authentication
 	app.use('/auth' , require('./routes/authenticate')(passport));
 
