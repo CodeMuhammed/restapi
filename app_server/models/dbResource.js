@@ -8,7 +8,7 @@ var openedColls = {};
 var url = '';
 
 //import the language driver
-module.exports = function(dbName , authObj){
+module.exports = function(dbName , authObj , app){
    
 	//This functions accesses the database and creates a pool of opened 
 	//connections to the required collections needed by the app
@@ -19,11 +19,12 @@ module.exports = function(dbName , authObj){
 					throw new Error('DB connection error ');
 				} else { 
 					assert.equal(null ,err);
-					console.log('Connected correcctly to the database '+dbName);
+					console.log('Connected correcctly to the database');
 					openedColls.Users = db.collection('Users');
 					openedColls.Contacts = db.collection('Contacts');
 					openedColls.Transactions = db.collection('Transactions');
 					openedColls.Services = db.collection('Services');
+					openedColls.Beta = db.collection('Beta');
 					DBOpened = true;
 					
 					/*db.collection('Tests').insert(
@@ -55,9 +56,13 @@ module.exports = function(dbName , authObj){
 		return DBOpened;
 	}
 	
-	//Do stuff with  dbName and authObj
-	//url = 'mongodb://127.0.0.1:27017/'+dbName.trim();
-	url = 'mongodb://'+ authObj.dbuser+ ':'+authObj.dbpassword+'@ds051738.mongolab.com:51738/'+dbName.trim();
+	//Set db connection string based on the current environment being worked in...
+	if(app.get('env') ==='development'){
+       url = 'mongodb://127.0.0.1:27017/test';
+	} else {
+       url = 'mongodb://'+ authObj.dbuser+ ':'+authObj.dbpassword+'@ds051738.mongolab.com:51738/'+dbName.trim();
+	}
+	
 	return {
 		initColls : initColls,
 		model : model

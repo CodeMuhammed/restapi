@@ -1,6 +1,6 @@
-module.exports = function(app){
+module.exports = function(app , dbResource){
 	//import resource controllers here
-    var rCtrl = require('../app_server/controllers/resourceCtrl.js')(app);
+    var rCtrl = require('../app_server/controllers/resourceCtrl.js')(app , dbResource);
 	
 	//extracts parameters from the route
 	app.param('userId' , function(req  , res  , next  , userId){
@@ -8,9 +8,7 @@ module.exports = function(app){
 		return next();
 	});
 	
-	app.route('/users/:userId')
+	app.route('/beta')
        .get(rCtrl.get)
-       .put(rCtrl.put)
-       .post(rCtrl.post)
-       .delete(rCtrl.remove);
+       .post(rCtrl.post);
 };
