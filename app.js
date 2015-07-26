@@ -23,7 +23,7 @@ var app = express();
 
 //set the model source @TODO use app.set(app.use) here ., Then return a function
 //that returns the object
-var dbResource = require('./app_server/models/dbResource')('restapi' , {dbuser:'codemuhammed' , dbpassword:'purslr'} , app);
+var dbResource = require('./app_server/models/dbResource')('restapi' , {dbuser:'' , dbpassword:''} , app);
 //initialize database
 dbResource.initColls(function(){
 	//initialize passport
