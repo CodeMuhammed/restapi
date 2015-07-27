@@ -52,7 +52,7 @@ dbResource.initColls(function(){
 	app.use(passport.session());
 	
 	app.get('/' , function(req , res){
-		res.json('restapi deployed :-) just awesome');
+		res.json('palingram restapi deployed :-) just awesome');
 	});
 	
 	//Define routes for authentication
