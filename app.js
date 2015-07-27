@@ -23,7 +23,7 @@ var app = express();
 
 //set the model source @TODO use app.set(app.use) here ., Then return a function
 //that returns the object
-var dbResource = require('./app_server/models/dbResource')('restapi' , {dbuser:'' , dbpassword:''} , app);
+var dbResource = require('./app_server/models/dbResource')('restapi' , {} , app);
 //initialize database
 dbResource.initColls(function(){
 	//initialize passport
@@ -62,7 +62,7 @@ dbResource.initColls(function(){
 	app.use('/api' , require('./routes/api')(dbResource));
 
 	//Define routes and middle wares in a separate module
-	require('./routes')(app , dbResource);
+	//require('./routes')(app , dbResource);
 
 	//handle errors using custom or 3rd party middle-wares
 	app.use(errorHandler());

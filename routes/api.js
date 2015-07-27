@@ -3,14 +3,15 @@ var router = express.Router();
 var fs = require('fs');
 var path = require('path');
 var ObjectId = require('mongodb').ObjectId;
+var _ = require('underscore');
 
 //api routes
 module.exports = function(dbResource){
     //models
-	var Contacts = dbResource.model('Contacts');
-	var Transactions = dbResource.model('Transactions');
+	var Tags = dbResource.model('Tags');
+	var Comments = dbResource.model('Comments');
 	var Users = dbResource.model('Users');
-	var Services = dbResource.model('Services');
+	var Posts = dbResource.model('Posts');
 
 	router.use(function(req , res , next){
 	   if(req.isAuthenticated()){
@@ -22,11 +23,58 @@ module.exports = function(dbResource){
 		   res.status(403).send({"error":{"msg":"invalid login credentials while in session"}});
 	   }
    });
-	router.param('id' , function(req , res , next , id){
-		req.id  = id;
-		return next();
-	});
+
+   router.param('id' , function(req , res , next , id){
+	  req.id  = id;
+	  return next();
+   });
 	
+  /*********************************************************************************
+   *********************************************************************************/
+	router.route('/tags')
+	   .post(function(req , res){
+	   	    Tags.find({_id : ObjectId(req.body.id)}).toArray(function(err ,  result){
+                if(err){
+                    res.status(500).send(err);
+                } else {
+                   var tags = result[0].tags;
+                   res.send( _.uniq(tags));
+                }
+	   	    });
+	   })
+	   .put(function(req , res){
+	   	   console.log(req.body);
+	   	   Tags.update({_id : ObjectId(req.body.id)} , {
+	   	   	   "$push" : {
+                    "tags": {
+                    	"$each": req.body.tags
+                    }
+	   	   	   }
+	   	   } , function(err , result){
+               if(err){
+                  res.status(500).send(err);
+               } else {
+               	  res.status(200).send('update recieved on the server');
+               }
+	   	   });
+           
+	   });
+
+	 /*********************************************************************************
+	 *********************************************************************************/
+     router.route('/user')
+        .put(function(req , res){
+        	//convert the _id to db compliant
+        	req.body._id = ObjectId(req.body._id);
+        	Users.update({_id : ObjectId(req.body._id)} , req.body , function(err , result){
+                 if(err){
+	                  res.status(500).send(err);
+	               } else {
+	               	  res.status(200).send('user updated on the server');
+	               }
+        	});
+        });
+
 	/*********************************************************************************
 	 *********************************************************************************/
 	router.route('/contact')

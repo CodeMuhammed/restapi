@@ -12,8 +12,7 @@ var ObjectId = require('mongodb').ObjectId;
 module.exports = function(passport  , dbResource){
 	//models
 	var Users = dbResource.model('Users');
-	var Contacts = dbResource.model('Contacts');
-	var Services = dbResource.model('Services');
+	var Tags = dbResource.model('Tags');
 
 	//Get collections or models needed for this routes
 	//var food = dbResource.model('food');
@@ -21,6 +20,7 @@ module.exports = function(passport  , dbResource){
 	var isValidPassword = function(user , password){
 		return bCrypt.compareSync(password , user.password);
 	};
+
 	var createHash = function(password){
 		return bCrypt.hashSync(password , null , null);
 	};
@@ -60,11 +60,9 @@ module.exports = function(passport  , dbResource){
 		
 		if(req.isAuthenticated()){
 			return done(null , req.user);
-		} else {
-			Users.find({'$or':[
-			   {'username':username},
-			   {'email':username}
-			]}).toArray(function(err , result){
+		} 
+		else {
+			Users.find({'username':username}).toArray(function(err , result){
 				if(err){
 					return done(err);
 				}
@@ -89,10 +87,7 @@ module.exports = function(passport  , dbResource){
 		var newUser = req.body;
 		console.log('passport signup called with data below');
 		
-		Users.find({'$or':[
-		   {'username':username},
-		   {'email':req.body.email}
-		]}).toArray(function(err, result){
+		Users.find({'username':username}).toArray(function(err, result){
 			if(err){
 				return done(err);
 			}
@@ -100,21 +95,20 @@ module.exports = function(passport  , dbResource){
 			if(result[0]){
 				return done(null , false);
 			} else {
-				createContactList();
+				createTags();
 			}
 			
 		});
 		
 	    //create a contact list for this user
-		function createContactList() {
-			Contacts.insertOne({"contacts" : []} , function(err , result){
+		function createTags() {
+			Tags.insertOne({"tags" : ['general']} , function(err , result){
 				if(err){
 					return done(err);
 				}
-				newUser.contactsId = result.ops[0]._id;
+				newUser.tags_id = result.ops[0]._id;
 				newUser.password = createHash(password);
-				createUser()
-				
+				createUser();
 			});
 		}
 		
@@ -124,9 +118,7 @@ module.exports = function(passport  , dbResource){
 				if(err){
 					return done(err);
 				} else {
-					return done(null , {
-						_id : result.ops[0]._id
-					});
+					return done(null , result.ops[0]);
 				}
 			});
 		}

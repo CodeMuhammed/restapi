@@ -19,10 +19,12 @@ module.exports = function(passport){
 
    var status = function(req , res , next){
        if(req.isAuthenticated()){
-		   res.status(200).send(req.user);
+          console.log(req.user);
+		      res.status(200).send(req.user);
 	     } 
-	   else {
-		   res.status(401).send('invalid username or password');
+
+	    else {
+		     res.status(401).send('invalid username or password');
 	     }
    };
 
@@ -31,7 +33,7 @@ module.exports = function(passport){
         status(req , res);
    });
 
-   router.post('/login' , passport.authenticate('login') , function(req , res){
+   router.post('/signin' , passport.authenticate('login') , function(req , res){
         status(req , res);
    });
   

@@ -21,10 +21,9 @@ module.exports = function(dbName , authObj , app){
 					assert.equal(null ,err);
 					console.log('Connected correcctly to the database');
 					openedColls.Users = db.collection('Users');
-					openedColls.Contacts = db.collection('Contacts');
-					openedColls.Transactions = db.collection('Transactions');
-					openedColls.Services = db.collection('Services');
-					openedColls.Beta = db.collection('Beta');
+					openedColls.Posts = db.collection('Posts');
+					openedColls.Tags = db.collection('Tags');
+					openedColls.Comments = db.collection('Comments');
 					DBOpened = true;
 					
 					/*db.collection('Tests').insert(
@@ -58,7 +57,7 @@ module.exports = function(dbName , authObj , app){
 	
 	//Set db connection string based on the current environment being worked in...
 	if(app.get('env') ==='development'){
-       url = 'mongodb://127.0.0.1:27017/test';
+       url = 'mongodb://127.0.0.1:27017/piveo';
 	} else {
        url = 'mongodb://'+ process.env.dbuser+ ':'+process.env.dbpassword+'@ds051738.mongolab.com:51738/'+dbName.trim();
 	}
