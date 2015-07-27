@@ -26,13 +26,6 @@ module.exports = function(dbName , authObj , app){
 					openedColls.Comments = db.collection('Comments');
 					DBOpened = true;
 					
-					/*db.collection('Tests').insert(
-					   {name:'hello'},
-                      function(err , result){
-						  console.log(result);
-					  }					   
-					);*/
-					
 					return cb();
 				}
 			});
