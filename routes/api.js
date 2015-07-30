@@ -38,9 +38,34 @@ module.exports = function(dbResource){
                     res.status(500).send(err);
                 } else {
                    var tags = result[0].tags;
-                   res.send( _.uniq(tags));
+                   computeTags(tags);
                 }
 	   	    });
+
+	   	    function computeTags(tags){
+	   	       //this create an object containg a key value pair where the
+	   	       //key is the name of the tag while the value  the count for  that tag
+               var map = _.countBy(tags , function(item){
+                     return item;
+               });
+
+               //This converts the object into an array of key value pairs and sorts
+               //The array based on the the value of the count and limits it to the last
+               //ten tags since the array is sorted in ascending order
+               
+               var topTenTags= _.sortBy( _.pairs(map) , function(item){
+                     return item[1];
+	   	    	} , 1).slice(-10);
+                
+                //This applys a map function to the array to extract the tag names
+                //from the tags value pairs
+	   	    	topTenTags = _.map(topTenTags , function(item){
+                     return item = item[0];
+	   	    	});
+
+                res.send(topTenTags);
+               
+	   	    }
 	   })
 	   .put(function(req , res){
 	   	   console.log(req.body);
