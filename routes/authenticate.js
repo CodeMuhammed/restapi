@@ -19,7 +19,6 @@ module.exports = function(passport){
 
    var status = function(req , res , next){
        if(req.isAuthenticated()){
-          console.log(req.user);
 		      res.status(200).send(req.user);
 	     } 
 

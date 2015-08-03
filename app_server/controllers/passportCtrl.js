@@ -27,13 +27,11 @@ module.exports = function(passport  , dbResource){
 	
 	//Tells passport how to get users full info
 	passport.serializeUser(function(user , done){
-		console.log('user serialized '+user._id);
 		return done(null , user._id); 
 	});
 
 	passport.deserializeUser(function(_id , done){
 		//query database or cache for actual data
-		console.log('user deserialized ' + _id);
 		Users.find({'_id' : ObjectId(_id)}).toArray(function(err , result){
             
 			if(err){
@@ -56,7 +54,6 @@ module.exports = function(passport  , dbResource){
 		//check if username exists
 		//check if password is correct
 		//sign in user
-		console.log('passport login called');
 		
 		if(req.isAuthenticated()){
 			return done(null , req.user);
@@ -85,7 +82,6 @@ module.exports = function(passport  , dbResource){
 		//sign in users in with newly created document
 		
 		var newUser = req.body;
-		console.log('passport signup called with data below');
 		
 		Users.find({'username':username}).toArray(function(err, result){
 			if(err){

@@ -37,8 +37,7 @@ module.exports = function(dbResource){
                 if(err){
                     res.status(500).send(err);
                 } else {
-                   var tags = result[0].tags;
-                   computeTags(tags);
+                   computeTags(result[0].tags);
                 }
 	   	    });
 
@@ -63,12 +62,14 @@ module.exports = function(dbResource){
                      return item = item[0];
 	   	    	});
 
+	   	    	console.log(topTenTags);
+
                 res.send(topTenTags);
                
 	   	    }
 	   })
+
 	   .put(function(req , res){
-	   	   console.log(req.body);
 	   	   Tags.update({_id : ObjectId(req.body.id)} , {
 	   	   	   "$push" : {
                     "tags": {
@@ -124,7 +125,7 @@ module.exports = function(dbResource){
 			     	}
              	});
              }
-
+             
              function addToFavourites(post){
                  Users.update(
                  	{"username":post.username} , 
@@ -135,19 +136,75 @@ module.exports = function(dbResource){
 	               } , 
 	               function(err , result){
 	                    if(err){
-							res.status(500).send('Not ok post was not added 1');
-						}
-						else {
-							res.status(200).send('new post added successfully');
-						}
+          							res.status(500).send('Not ok post was not added 1');
+          						}
+          						else {
+          							res.status(200).send(post);
+          						}
 	               });
              }
         })
         
+        .put(function(req , res){
+             req.body._id = ObjectId(req.body._id);
+             Posts.update(
+                {_id : req.body._id},
+                req.body,
+                function(err , result){
+                    if(err){
+                        console.log(err);
+                        res.status(500).send('Not ok post was not updated');
+                    }
+                    else {
+                       console.log(result);
+                       res.status(200).send('update post recieved on the server');
+                    }
+                }
+             );
+             
+        })
+
         .delete(function(req , res){
         	//@TODO delete post
-        	 console.log(req.query);
-             res.status(200).send('delete recieved in the server');
+        	var query = req.query;
+        	Comments.remove({_id : ObjectId(query.comments_id)} , function(err , result){
+                 if(err){
+                     res.status(500).send('Not ok comment was not removed');
+                 }
+                 else{
+                     removePost(query._id);
+                 }
+        	});
+        	
+        	function removePost(post_id){
+                 Posts.remove({_id : ObjectId(post_id)} , function(err , result){
+	                 if(err){
+	                     res.status(500).send('Not ok post was not removed');
+	                 }
+	                 else{
+	                 	 removeRef(post_id);
+	                 }
+	        	});
+        	};
+
+        	function removeRef(post_id){
+                 Users.update({username : query.username} , 
+                 	  {
+                 	  	 "$pull":{
+                             "favourites":post_id
+                 	  	 }
+                 	  },
+                 	  function(err ,  reesult){
+                          if(err){
+                              res.status(500).send('post ref was not removed');
+                          }
+                          else{
+                              res.status(200).send('post deleted successfully');
+                          }
+                 	  }
+                 );
+        	}; 
+
         });
 
      
@@ -155,17 +212,42 @@ module.exports = function(dbResource){
 	 *********************************************************************************/
 	  router.route('/allPosts')
 	     .post(function(req , res){
-	     	  Posts.find({}).toArray(function(err , result){
-                   if(err){
-						res.status(500).send('Not ok post was not added 1');
-					}
-					else {
-						res.status(200).send(result);
-					}
+	     	  console.log(req.body);
+	     	  Posts.find({
+	     	      "tags":{"$in":req.body}
+	     	  } , false , true).toArray(
+           function(err , result){
+            if(err){
+  						res.status(500).send('Not ok all posts');
+  					}
+  					else {
+  						res.status(200).send(result);
+  					}
 	     	  });
 	     });
 
     /*********************************************************************************
+	 *********************************************************************************/
+     router.route('/allFavourites')
+	     .post(function(req , res){
+	     	  //convert ids into objecctids
+	     	  req.body = _.map( req.body , function(item){
+	     	  	  if(item.length>12){
+                  return item = ObjectId(item);
+	     	  	  } 
+	     	  });
+
+	     	  Posts.find({"_id":{"$in":req.body}}).toArray(function(err , result){
+           if(err){
+  						res.status(500).send('Not ok all favourites');
+  					}
+  					else {
+  						res.status(200).send(result);
+  					}
+	     	  });
+	  });
+
+	 /*********************************************************************************
 	 *********************************************************************************/
 
 	
