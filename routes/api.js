@@ -6,7 +6,7 @@ var ObjectId = require('mongodb').ObjectId;
 var _ = require('underscore');
 
 //api routes
-module.exports = function(dbResource){
+module.exports = function(dbResource , tagsReducer){
     //models
 	var Tags = dbResource.model('Tags');
 	var Comments = dbResource.model('Comments');
@@ -32,6 +32,10 @@ module.exports = function(dbResource){
   /*********************************************************************************
    *********************************************************************************/
 	router.route('/tags')
+     .get(function(req , res){
+          res.status(200).send(tagsReducer.getPopular());
+     })
+
 	   .post(function(req , res){
 	   	    Tags.find({_id : ObjectId(req.body.id)}).toArray(function(err ,  result){
                 if(err){
@@ -61,10 +65,8 @@ module.exports = function(dbResource){
 	   	    	topTenTags = _.map(topTenTags , function(item){
                      return item = item[0];
 	   	    	});
-
-	   	    	console.log(topTenTags);
-
-                res.send(topTenTags);
+	
+            res.send(topTenTags);
                
 	   	    }
 	   })
@@ -156,7 +158,6 @@ module.exports = function(dbResource){
                         res.status(500).send('Not ok post was not updated');
                     }
                     else {
-                       console.log(result);
                        res.status(200).send('update post recieved on the server');
                     }
                 }
@@ -212,10 +213,9 @@ module.exports = function(dbResource){
 	 *********************************************************************************/
 	  router.route('/allPosts')
 	     .post(function(req , res){
-	     	  console.log(req.body);
 	     	  Posts.find({
 	     	      "tags":{"$in":req.body}
-	     	  } , false , true).toArray(
+	     	  } , false , true).sort({'data':-1}).limit(1000).toArray(
            function(err , result){
             if(err){
   						res.status(500).send('Not ok all posts');
@@ -226,7 +226,7 @@ module.exports = function(dbResource){
 	     	  });
 	     });
 
-    /*********************************************************************************
+  /*********************************************************************************
 	 *********************************************************************************/
      router.route('/allFavourites')
 	     .post(function(req , res){
@@ -237,7 +237,7 @@ module.exports = function(dbResource){
 	     	  	  } 
 	     	  });
 
-	     	  Posts.find({"_id":{"$in":req.body}}).toArray(function(err , result){
+	     	  Posts.find({"_id":{"$in":req.body}}).sort({'data':-1}).limit(1000).toArray(function(err , result){
            if(err){
   						res.status(500).send('Not ok all favourites');
   					}
