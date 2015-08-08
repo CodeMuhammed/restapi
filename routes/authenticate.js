@@ -8,7 +8,6 @@ module.exports = function(passport){
          next();
    	  }
    	 else if(req.isAuthenticated()){
-
 		    res.status(200).send(req.user);
 	   }
      

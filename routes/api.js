@@ -14,10 +14,15 @@ module.exports = function(dbResource , tagsReducer){
 	var Posts = dbResource.model('Posts');
 
 	router.use(function(req , res , next){
-	   if(req.isAuthenticated()){
-		  console.log('This User is authenticated'); 
-		  return next();
-	   }
+	   
+     if(req.path=='/posts/1' && req.method==='GET'){
+        console.log('User just  requested a preview of a post');
+        return next();
+     }
+     else if(req.isAuthenticated()){
+      console.log('This User is authenticated here'); 
+      return next();
+     }
 	   else{
 		   console.log('This is not auth ');
 		   res.status(403).send({"error":{"msg":"invalid login credentials while in session"}});
@@ -106,6 +111,16 @@ module.exports = function(dbResource , tagsReducer){
 	/*********************************************************************************
 	 *********************************************************************************/
      router.route('/posts/:id')
+       .get(function(req , res){
+             Posts.find({"_id":ObjectId(req.query.post_id)}).toArray(function(err , result){
+                  if(err){
+                     return res.status(500).send('preview Not ok');
+                  }
+                  else {
+                    res.status(200).send(result);
+                  }
+             });
+        })
         .post(function(req , res){
              Comments.insertOne({comments : []} , function(err , result){
                  if(err){
