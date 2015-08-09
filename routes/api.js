@@ -15,8 +15,7 @@ module.exports = function(dbResource , tagsReducer){
 
 	router.use(function(req , res , next){
 	   
-     if(req.path=='/posts/1' && req.method==='GET'){
-        console.log('User just  requested a preview of a post');
+     if(req.method==='GET'){
         return next();
      }
      else if(req.isAuthenticated()){
@@ -226,6 +225,99 @@ module.exports = function(dbResource , tagsReducer){
      
 	 /*********************************************************************************
 	 *********************************************************************************/
+  router.route('/comments/:id')
+     .get(function(req , res){
+          Comments.find({"_id":ObjectId(req.id)}).toArray(function(err , result){
+              if(err){
+                 res.status(500).send('Not ok get comment');
+              }
+              else{
+                res.status(200).send(result);
+              }
+          });
+          
+     })
+
+     .post(function(req , res){
+          Comments.update({"_id":ObjectId(req.id)} , 
+            {
+               "$addToSet":{
+                     "comments":req.body
+               }
+            } ,
+             function(err , result){
+                 if(err){
+                     res.status(500).send('not ok new comment');
+                 }
+                 else{
+                     res.status(200).send('comment post success');
+                 }
+            })
+          
+     })
+
+     .put(function(req , res){
+           Comments.update({
+              "_id":ObjectId(req.id),
+              "comments.date": req.body.date*1
+            } , 
+          {
+            "$set": {
+                "comments.$" : req.body
+            }
+          }, function(err , result){
+              if(err){
+                   console.log(err);
+                   res.status(500).send('not ok update comment');
+               }
+               else{
+                   res.status(200).send('comment updated successfully');
+               }
+          });
+     })
+
+     .delete(function(req , res){
+          Comments.update({
+              "_id":ObjectId(req.id),
+              "comments.date": req.query.date*1
+            } , 
+          {
+            "$unset": {
+                "comments.$" : 1
+            }
+          },
+          function(err , result){
+              if(err){
+                   console.log(err);
+                   res.status(500).send('not ok delete comment 1');
+               }
+               else{
+                  removeNull();
+               }
+          });
+
+          function removeNull(){
+               Comments.update({
+                  "_id":ObjectId(req.id)
+                } , 
+              {
+                "$pull": {
+                    "comments" : null
+                }
+              },
+              function(err , result){
+                  if(err){
+                       console.log(err);
+                       res.status(500).send('not ok delete comment 2');
+                   }
+                   else{
+                      res.status(200).send('comment deletted successfully');
+                   }
+              });
+          }
+     });
+  /*********************************************************************************
+   *********************************************************************************/
 	  router.route('/allPosts')
 	     .post(function(req , res){
 	     	  Posts.find({
