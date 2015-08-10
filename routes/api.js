@@ -62,15 +62,15 @@ module.exports = function(dbResource , tagsReducer){
                
                var topTenTags= _.sortBy( _.pairs(map) , function(item){
                      return item[1];
-	   	    	} , 1).slice(-10);
-                
+	   	    	   } , 1).slice(-10);
+
                 //This applys a map function to the array to extract the tag names
                 //from the tags value pairs
-	   	    	topTenTags = _.map(topTenTags , function(item){
-                     return item = item[0];
-	   	    	});
-	
-            res.send(topTenTags);
+  	   	    	topTenTags = _.map(topTenTags , function(item){
+                       return item = item[0];
+  	   	    	});
+  	
+              res.send(topTenTags);
                
 	   	    }
 	   })
@@ -86,7 +86,7 @@ module.exports = function(dbResource , tagsReducer){
                if(err){
                   res.status(500).send(err);
                } else {
-               	  res.status(200).send('update recieved on the server');
+               	  res.status(200).send('tags update recieved on the server');
                }
 	   	   });
            
@@ -319,10 +319,30 @@ module.exports = function(dbResource , tagsReducer){
   /*********************************************************************************
    *********************************************************************************/
 	  router.route('/allPosts')
+       .get(function(req , res){
+           Posts.find({}).toArray(
+           function(err , result){
+            if(err){
+              res.status(500).send('Not ok all posts');
+            }
+            else {
+              res.status(200).send(result);
+            }
+          });
+       })
+
 	     .post(function(req , res){
-	     	  Posts.find({
-	     	      "tags":{"$in":req.body}
-	     	  } , false , true).sort({'data':-1}).limit(1000).toArray(
+          console.log(req.body);
+          var query;
+          if(req.body.length == 1 &&  req.body[0] == 'general'){
+              query  = {};
+          }
+          else{
+              query = {
+                  "tags":{"$in":req.body}
+              };
+          }
+	     	  Posts.find(query).sort({'date':-1}).limit(1000).toArray(
            function(err , result){
             if(err){
   						res.status(500).send('Not ok all posts');
@@ -344,7 +364,7 @@ module.exports = function(dbResource , tagsReducer){
 	     	  	  } 
 	     	  });
 
-	     	  Posts.find({"_id":{"$in":req.body}}).sort({'data':-1}).limit(1000).toArray(function(err , result){
+	     	  Posts.find({"_id":{"$in":req.body}}).sort({'date':-1}).limit(1000).toArray(function(err , result){
            if(err){
   						res.status(500).send('Not ok all favourites');
   					}
