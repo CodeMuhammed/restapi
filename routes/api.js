@@ -320,7 +320,7 @@ module.exports = function(dbResource , tagsReducer){
    *********************************************************************************/
 	  router.route('/allPosts')
        .get(function(req , res){
-           Posts.find({} , {_id : 1}).toArray(
+           Posts.find({}).toArray(
            function(err , result){
             if(err){
               res.status(500).send('Not ok all posts');
