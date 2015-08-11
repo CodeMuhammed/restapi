@@ -111,7 +111,7 @@ module.exports = function(dbResource , tagsReducer){
 	 *********************************************************************************/
      router.route('/posts/:id')
        .get(function(req , res){
-             Posts.find({"_id":ObjectId(req.query.post_id)}).toArray(function(err , result){
+             Posts.find({"_id":ObjectId(req.id)}).toArray(function(err , result){
                   if(err){
                      return res.status(500).send('preview Not ok');
                   }
@@ -320,7 +320,7 @@ module.exports = function(dbResource , tagsReducer){
    *********************************************************************************/
 	  router.route('/allPosts')
        .get(function(req , res){
-           Posts.find({}).toArray(
+           Posts.find({} , {_id : 1}).toArray(
            function(err , result){
             if(err){
               res.status(500).send('Not ok all posts');
