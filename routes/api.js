@@ -36,9 +36,7 @@ module.exports = function(dbResource , tagsReducer){
   /*********************************************************************************
    *********************************************************************************/
 	router.route('/tags')
-     .get(function(req , res){
-          res.status(200).send(tagsReducer.getPopular());
-     })
+     .get(tagsReducer.getPopular())
 
 	   .post(function(req , res){
 	   	    Tags.find({_id : ObjectId(req.body.id)}).toArray(function(err ,  result){
@@ -50,28 +48,9 @@ module.exports = function(dbResource , tagsReducer){
 	   	    });
 
 	   	    function computeTags(tags){
-	   	       //this create an object containg a key value pair where the
-	   	       //key is the name of the tag while the value  the count for  that tag
-               var map = _.countBy(tags , function(item){
-                     return item;
-               });
-
-               //This converts the object into an array of key value pairs and sorts
-               //The array based on the the value of the count and limits it to the last
-               //ten tags since the array is sorted in ascending order
-               
-               var topTenTags= _.sortBy( _.pairs(map) , function(item){
-                     return item[1];
-	   	    	   } , 1).slice(-10);
-
-                //This applys a map function to the array to extract the tag names
-                //from the tags value pairs
-  	   	    	topTenTags = _.map(topTenTags , function(item){
-                       return item = item[0];
-  	   	    	});
-  	
-              res.send(topTenTags);
-               
+	   	        tagsReducer.topTags(tags , 10 , function(result){
+                   res.status(200).send(result);
+              });   
 	   	    }
 	   })
 
