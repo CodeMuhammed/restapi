@@ -90,14 +90,46 @@ module.exports = function(dbResource , tagsReducer){
 	 *********************************************************************************/
      router.route('/posts/:id')
        .get(function(req , res){
+             
              Posts.find({"_id":ObjectId(req.id)}).toArray(function(err , result){
                   if(err){
                      return res.status(500).send('preview Not ok');
                   }
+                  else if(result[0] == undefined){
+                     return res.status(500).send('preview Not ok 1');
+                  }
                   else {
-                    res.status(200).send(result);
+                    if(req.query.p == '1'){
+                        console.log('external linked');
+                        recordView(result[0]);
+                    }
+                    else{
+                       console.log('in linked');
+                       res.status(200).send(result[0]);
+                    }
+                    
                   }
              });
+
+             function recordView(result){
+                 Users.update({"username":result.username} , {
+                    "$inc":{
+                       "pageViews":1
+                    },
+                    "$set":{
+                        "lastViewed": Date.now()
+                    }
+                 } , 
+                 function(err , status){
+                      if(err){
+                         res.status(500).send('preview not ok 2');
+                      }
+                     else{
+                         res.status(200).send(result);
+                      }
+                 });
+                 
+             }
         })
         .post(function(req , res){
              Comments.insertOne({comments : []} , function(err , result){
