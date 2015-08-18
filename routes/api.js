@@ -18,10 +18,12 @@ module.exports = function(dbResource , tagsReducer){
      if(req.method==='GET'){
         return next();
      }
+
      else if(req.isAuthenticated()){
       console.log('This User is authenticated here'); 
       return next();
      }
+
 	   else{
 		   console.log('This is not auth ');
 		   res.status(403).send({"error":{"msg":"invalid login credentials while in session"}});
@@ -65,7 +67,7 @@ module.exports = function(dbResource , tagsReducer){
                if(err){
                   res.status(500).send(err);
                } else {
-               	  res.status(200).send('tags update recieved on the server');
+               	  res.status(200).send('tags updated');
                }
 	   	   });
            
@@ -125,10 +127,21 @@ module.exports = function(dbResource , tagsReducer){
                          res.status(500).send('preview not ok 2');
                       }
                      else{
-                         res.status(200).send(result);
+                         incrementPostView(result);
                       }
                  });
                  
+             }
+
+             function incrementPostView(result){
+                  Posts.update({"_id":ObjectId(req.id)} , {"$inc":{"views":1}} , function(err , status){
+                      if(err){
+                         res.status(500).send('preview not ok 3');
+                      }
+                     else{
+                          res.status(200).send(result);
+                      }
+                  })
              }
         })
         .post(function(req , res){
@@ -343,7 +356,6 @@ module.exports = function(dbResource , tagsReducer){
        })
 
 	     .post(function(req , res){
-          console.log(req.body);
           var query;
           if(req.body.length == 1 &&  req.body[0] == 'general'){
               query  = {};
@@ -387,6 +399,20 @@ module.exports = function(dbResource , tagsReducer){
 
 	 /*********************************************************************************
 	 *********************************************************************************/
+   router.route('/authorPosts/:username')
+       .get(function(req , res){
+             Posts.find({"username":req.params.username}).sort({'date':-1}).limit(5).toArray(function(err , result){
+               if(err){
+                  res.status(500).send('Not ok authorPosts get');
+                }
+                else {
+                  res.status(200).send(result);
+                }
+              });
+       });
+
+  /*********************************************************************************
+   *********************************************************************************/
 
 	
 	return router;
