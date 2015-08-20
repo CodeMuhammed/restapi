@@ -6,7 +6,7 @@ var ObjectId = require('mongodb').ObjectId;
 var _ = require('underscore');
 
 //api routes
-module.exports = function(dbResource , tagsReducer){
+module.exports = function(dbResource , tagsReducer , emailClient){
     //models
 	var Tags = dbResource.model('Tags');
 	var Comments = dbResource.model('Comments');
@@ -413,7 +413,21 @@ module.exports = function(dbResource , tagsReducer){
 
   /*********************************************************************************
    *********************************************************************************/
-
-	
+   router.route('/sendEmail')
+      .post(function(req , res){
+            emailClient.test(function(err , status){
+                 if(err){
+                      console.log(err);
+                      res.status(500).send('Email not sent at this time');
+                 }
+                 else {
+                     console.log(status);
+                     res.status(200).send('email sent ok on the server');
+                 }
+                
+            });
+      });
+   /*********************************************************************************
+   *********************************************************************************/
 	return router;
 };

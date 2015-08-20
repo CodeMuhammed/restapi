@@ -26,8 +26,11 @@ var app = express();
 var dbResource = require('./app_server/models/dbResource')('restapi' , {} , app);
 //initialize database
 dbResource.initColls(function(){
-	//Run map reduce task for most popular tags
+	//Run map reduce task for tags
 	var tagsReducer = require('./app_server/controllers/tagsReducer')(dbResource);
+
+	//Email client 
+	var emailClient = require('./app_server/controllers/emailClient')(dbResource , tagsReducer);
 
 	//initialize passport
 	var initPassport = require('./app_server/controllers/passportCtrl');
@@ -62,7 +65,7 @@ dbResource.initColls(function(){
 	app.use('/auth' , require('./routes/authenticate')(passport));
 
 	//api routes starts here
-	app.use('/api' , require('./routes/api')(dbResource , tagsReducer));
+	app.use('/api' , require('./routes/api')(dbResource , tagsReducer , emailClient));
 
 	//Define routes and middle wares in a separate module
 	//require('./routes')(app , dbResource);
