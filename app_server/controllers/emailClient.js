@@ -17,7 +17,7 @@ module.exports = function(dbResource , tagsReducer){
       // setup e-mail data with unicode symbols
       var mailOptions = {
           from: 'Muhammed Ali <palingramblog@gmail.com>', // sender address
-          to: 'codemuhammed@gmail.com', // list of receivers
+          to: email, // list of receivers
           subject: 'New account verification', // Subject line
           html: htmldata // html body
       };

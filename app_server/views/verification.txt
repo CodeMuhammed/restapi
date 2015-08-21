@@ -15,10 +15,15 @@
          <span style="font-size:2em; margin-left:1.4em">  palingram</span>
       </div>
       <div style="padding:3em 1em;">
-           Hello @%firstname @%lastname, thanks for signing up for palingram, please click on the green button below
+           Hello @%firstname @%lastname, <br /> Welcome to Nigeria's first blogging platform please click on the green button below
          to verify your account
          <hr/ style="margin-top:1em; margin-bottom:1em;">
+         
          <a style="padding:.6em 1em; background:green; color:#fff; text-decoration:none" href="@%callback_url"> verify account </a>
+         <hr/ style="margin-top:1em; margin-bottom:1em;">
+          <a style="padding:.3em .5em; background:#fff; color:#000;" href="http://wwww.palingram.com/#!/gettingstarted"> See the getting started guide </a>
+           <a style="padding:.3em .5em; background:#fff; color:#000;" href="http://wwww.palingram.com/#!/gettingstarted"> monetization tips and tricks </a>
+         
       </div>
      </div>
   </body>
