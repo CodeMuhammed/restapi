@@ -415,18 +415,69 @@ module.exports = function(dbResource , tagsReducer , emailClient){
    *********************************************************************************/
    router.route('/sendEmail')
       .post(function(req , res){
-            emailClient.test(function(err , status){
-                 if(err){
-                      console.log(err);
-                      res.status(500).send('Email not sent at this time');
-                 }
-                 else {
-                     console.log(status);
-                     res.status(200).send('email sent ok on the server');
-                 }
+           var callback_url = "https://palingramapi.herokuapp.com/emailclient/"+req.body.action+'/'+req.body.username;
+           //var res = str.replace("Microsoft", "W3Schools");
+           var htmldata;
+           switch(req.body.action) { 
                 
-            });
+                case 'emailVerification' : {
+                     htmldata = fs.readFileSync(path.join('app_server' , 'views' , 'verification.txt')).toString();
+                     htmldata = htmldata.replace('@%firstname' , req.body.firstname).replace('@%lastname' , req.body.lastname).replace('@%callback_url' , callback_url);
+                     console.log(htmldata);
+                     break;
+                }
+                 default:{
+                    break;
+                }
+
+           };
+     
+            //send the email to the specific user 
+            if(htmldata){
+                 emailClient.emailVerifiction(htmldata  , req.body.username , function(err , status){
+                       if(err){
+                            console.log(err);
+                            res.status(500).send('Email not sent at this time');
+                       }
+                       else {
+                           console.log(status);
+                           res.status(200).send('email sent successfully');
+                       }
+                      
+                  });
+            }
+            else {
+                res.status(500).send('Email not configured for that action');
+            }
       });
+   /*********************************************************************************
+   *********************************************************************************/
+   router.route('/emailclient/:action/:username')
+       .get(function(req , res){
+            console.log(req.params);
+            var action = req.params.action;
+            var username = req.params.username;
+
+           if(action == 'emailVerification'){
+               Users.update({"username":username} , 
+                {"$set":{
+                    "emailVerified":true
+               }} , function(err , status){
+                    console.log(status);
+                    if(err){
+                        res.status(500).send('Sorry we could not verify your email at this time');
+                    }
+                    else {
+                        res.status(200).send('Email verified successfully');
+                    }
+                   
+               });
+           }
+           else {
+                res.status(500).send('Email response not configured for that action');
+           } 
+
+       });
    /*********************************************************************************
    *********************************************************************************/
 	return router;

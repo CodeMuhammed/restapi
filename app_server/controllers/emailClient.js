@@ -1,27 +1,25 @@
 var ObjectId = require('mongodb').ObjectId;
 var nodemailer =  require('nodemailer');
+var path = require('path');
 
 // create reusable transporter object using SMTP transport
 var transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: 'mailgun',
     auth: {
-        user: 'palingramblog@gmail.com',
-        pass: process.env.emailpassword
+        user: 'postmaster@palingram.com',
+        pass:  process.env.mailpassword
     }
 });
 
 module.exports = function(dbResource , tagsReducer){
 	
-  function test(cb){
-      console.log('node mailer test');
-
+  function emailVerifiction(htmldata , email ,  cb){
       // setup e-mail data with unicode symbols
       var mailOptions = {
           from: 'Muhammed Ali <palingramblog@gmail.com>', // sender address
           to: 'codemuhammed@gmail.com', // list of receivers
-          subject: 'Palingram test mailer', // Subject line
-          text: 'Hello world ✔', // plaintext body
-          html: '<b>Hello world ✔</b>' // html body
+          subject: 'New account verification', // Subject line
+          html: htmldata // html body
       };
 
       // send mail with defined transport object
@@ -37,6 +35,6 @@ module.exports = function(dbResource , tagsReducer){
   }
 
 	return {
-		test : test
+		emailVerifiction : emailVerifiction
 	};
 } 
