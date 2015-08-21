@@ -415,7 +415,7 @@ module.exports = function(dbResource , tagsReducer , emailClient){
    *********************************************************************************/
    router.route('/sendEmail')
       .post(function(req , res){
-           var callback_url = "https://palingramapi.herokuapp.com/emailclient/"+req.body.action+'/'+req.body.username;
+           var callback_url = "https://palingramapi.herokuapp.com/api/emailclient/"+req.body.action+'/'+req.body.username;
            //var res = str.replace("Microsoft", "W3Schools");
            var htmldata;
            switch(req.body.action) { 
