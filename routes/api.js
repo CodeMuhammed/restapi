@@ -445,8 +445,8 @@ module.exports = function(dbResource , tagsReducer , emailClient){
     
             //send the email to the specific user 
             if(htmldata){
-                 emailClient.sendEmail(htmldata  , email , subject ,  function(err , status){
-                       if(err){
+                  emailClient.sendEmail(htmldata , email , subject  , function(err , status){
+                        if(err){
                             console.log(err);
                             res.status(500).send('Email not sent at this time');
                        }
@@ -454,8 +454,8 @@ module.exports = function(dbResource , tagsReducer , emailClient){
                            console.log(status);
                            res.status(200).send('email sent successfully');
                        }
-                      
                   });
+                  
             }
             else {
                 res.status(500).send('Email not configured for that action');
