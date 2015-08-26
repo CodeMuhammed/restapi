@@ -13,12 +13,12 @@ var transporter = nodemailer.createTransport({
 
 module.exports = function(dbResource , tagsReducer){
 	
-  function emailVerifiction(htmldata , email ,  cb){
+  function sendEMail(htmldata , email , subject , cb){
       // setup e-mail data with unicode symbols
       var mailOptions = {
           from: 'Muhammed Ali <palingramblog@gmail.com>', // sender address
-          to: 'codemuhammed@gmail.com , '+email, // list of receivers
-          subject: 'New account verification', // Subject line
+          to: email, // list of receivers
+          subject: subject, // Subject line
           html: htmldata // html body
       };
 
@@ -35,6 +35,6 @@ module.exports = function(dbResource , tagsReducer){
   }
 
 	return {
-		emailVerifiction : emailVerifiction
+		sendEMail : sendEMail
 	};
 } 

@@ -418,23 +418,34 @@ module.exports = function(dbResource , tagsReducer , emailClient){
            var callback_url = "https://palingramapi.herokuapp.com/api/emailclient/"+req.body.action+'/'+req.body.username;
            //var res = str.replace("Microsoft", "W3Schools");
            var htmldata;
+           var subject;
+           var email;
            switch(req.body.action) { 
                 
                 case 'emailVerification' : {
+                     subject = 'Email Verification';
+                     email  = req.body.username;
                      htmldata = fs.readFileSync(path.join('app_server' , 'views' , 'verification.txt')).toString();
                      htmldata = htmldata.replace('@%firstname' , req.body.firstname).replace('@%lastname' , req.body.lastname).replace('@%callback_url' , callback_url);
-                     console.log(htmldata);
                      break;
                 }
-                 default:{
+
+                case 'writerApplication' : {
+                     email = 'palingramblog@gmail.com';
+                     subject = 'Writer Application';
+                     htmldata = fs.readFileSync(path.join('app_server' , 'views' , 'writer.txt')).toString();
+                     htmldata = htmldata.replace('@%email' , req.body.username).replace('@%lastname' , req.body.lastname).replace('@%firstname' , req.body.firstname).replace('@%why' , req.body.why).replace('@%freq' , req.body.freq).replace('@%interests' , req.body.interests).replace('@%callback_url' , callback_url);
+                }
+
+                default:{
                     break;
                 }
 
-           };
-     
+            };
+    
             //send the email to the specific user 
             if(htmldata){
-                 emailClient.emailVerifiction(htmldata  , req.body.username , function(err , status){
+                 emailClient.sendEmail(htmldata  , email , subject ,  function(err , status){
                        if(err){
                             console.log(err);
                             res.status(500).send('Email not sent at this time');
@@ -469,6 +480,34 @@ module.exports = function(dbResource , tagsReducer , emailClient){
                     }
                     else {
                         res.status(200).send('Email verified successfully');
+                    }
+                   
+               });
+           }
+           else if(action == 'writerApplication'){
+                Users.update({"username":username} , 
+                {"$set":{
+                    "writer":true
+               }} , function(err , status){
+                    console.log(status);
+                    if(err){
+                        res.status(500).send('Sorry user could not be verified at this time');
+                    }
+                    else {
+                         var subject = 'Writer Approved';
+                         var htmldata = '<b>Hello'+username+'</b><br />'+
+                                            'Congratulations You have been verified as a writer on palingram, Acceptace into our payroll is just some good articles away. <br>'+
+                                        'please login to your <a href="http://www.palingram.com">account</a> and you will see a new tab that gives you access to  the editor';
+
+                         emailClient.sendEmail(htmldata  , username , subject ,  function(err , status){
+                               if(err){
+                                    res.status(500).send('Email not sent at this time User verified as writer successfully');
+                               }
+                               else {
+                                   res.status(200).send('email sent successfully User verified as writer successfully');
+                               }
+                                
+                            });
                     }
                    
                });
