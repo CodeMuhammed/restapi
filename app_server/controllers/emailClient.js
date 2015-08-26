@@ -13,7 +13,7 @@ var transporter = nodemailer.createTransport({
 
 module.exports = function(dbResource , tagsReducer){
 	
-  function sendEMail(htmldata , email , subject , cb){
+  function sendEmail(htmldata , email , subject , cb){
       // setup e-mail data with unicode symbols
       var mailOptions = {
           from: 'Muhammed Ali <palingramblog@gmail.com>', // sender address
@@ -35,6 +35,6 @@ module.exports = function(dbResource , tagsReducer){
   }
 
 	return {
-		sendEMail : sendEMail
+		sendEmail : sendEmail
 	};
 } 
