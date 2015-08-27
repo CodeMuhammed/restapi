@@ -495,7 +495,7 @@ module.exports = function(dbResource , tagsReducer , emailClient){
                     }
                     else {
                          var subject = 'Writer Approved';
-                         var htmldata = '<b>Hello'+username+'</b><br />'+
+                         var htmldata = '<b>Hello '+username+'</b><br />'+
                                             'Congratulations You have been verified as a writer on palingram, Acceptace into our payroll is just some good articles away. <br>'+
                                         'please login to your <a href="http://www.palingram.com">account</a> and you will see a new tab that gives you access to  the editor';
 
