@@ -101,7 +101,7 @@ module.exports = function(dbResource , tagsReducer , emailClient){
                      return res.status(500).send('preview Not ok 1');
                   }
                   else {
-                    if(req.query.p == '1'){
+                    if(req.query.p != result[0].username){
                         console.log('external linked');
                         recordView(result[0]);
                     }
