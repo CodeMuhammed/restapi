@@ -7,7 +7,7 @@ var _ = require('underscore');
 
 //api routes
 module.exports = function(dbResource , tagsReducer , emailClient){
-    //models
+  //models
 	var Tags = dbResource.model('Tags');
 	var Comments = dbResource.model('Comments');
 	var Users = dbResource.model('Users');

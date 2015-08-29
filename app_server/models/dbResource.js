@@ -24,6 +24,7 @@ module.exports = function(dbName , authObj , app){
 					openedColls.Posts = db.collection('Posts');
 					openedColls.Tags = db.collection('Tags');
 					openedColls.Comments = db.collection('Comments');
+					openedColls.Tradr = db.collection('Tradr');
 					DBOpened = true;
 					
 					return cb();

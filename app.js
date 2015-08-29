@@ -67,6 +67,9 @@ dbResource.initColls(function(){
 	//api routes starts here
 	app.use('/api' , require('./routes/api')(dbResource , tagsReducer , emailClient));
 
+	//tradr app routes
+    app.use('/tradr' , require('./routes/tradr')(dbResource));
+
 	//Define routes and middle wares in a separate module
 	//require('./routes')(app , dbResource);
 
