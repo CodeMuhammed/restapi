@@ -78,14 +78,41 @@ module.exports = function(dbResource , tagsReducer , emailClient){
      router.route('/user')
         .put(function(req , res){
         	//convert the _id to db compliant
+
         	req.body._id = ObjectId(req.body._id);
         	Users.update({_id : ObjectId(req.body._id)} , req.body , function(err , result){
                  if(err){
 	                  res.status(500).send(err);
 	               } else {
-	               	  res.status(200).send('user updated on the server');
+                    updateUserPosts();
 	               }
         	});
+
+          //This function updates every post the user has with current image and bio
+          function updateUserPosts(){
+             
+             Posts.update({username : req.body.username} ,
+                 {
+                   "$set":{
+                      image:req.body.image ,
+                      bio: req.body.bio
+                   }
+                 } , 
+                 {
+                    multi : true
+                 },
+                 function(err , result){
+                     if(err){
+                         
+                         res.status(500).send('unable to update users posts');
+                     }
+                     else {
+                          res.status(200).send('profile updated');
+                     }
+                }
+             );
+          }
+
         });
 
 	/*********************************************************************************
