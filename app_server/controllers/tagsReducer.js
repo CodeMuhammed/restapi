@@ -51,8 +51,8 @@ module.exports = function(dbResource){
             	} , []);
                 
                 //computes the top 50 tags and send the result in response
-                topTags(allTags , 50 , function(result){
-                     res.status(200).send(result);
+                topTags(allTags , 1000 , function(result){
+                     res.status(200).send(result.reverse());
                 });   
             }
     	};
