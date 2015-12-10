@@ -546,5 +546,12 @@ module.exports = function(dbResource , tagsReducer , emailClient){
        });
    /*********************************************************************************
    *********************************************************************************/
+    router.route('/newsletter/:email')
+       //@TODO add user to nodemailer mailing list via the api or save to a collection
+       .get(function(req , res){
+             res.status(200).send('Subscription successful');
+       });
+  /*********************************************************************************
+   *********************************************************************************/
 	return router;
 };
